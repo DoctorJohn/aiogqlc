@@ -33,7 +33,8 @@ query = '''
 
 async def foo():
     client = GraphQLClient('https://graphql.org/swapi-graphql/')
-    await client.execute(query)
+    response = await client.execute(query)
+    print(await response.json())
 
 if __name__ == '__main__':
     asyncio.get_event_loop().run_until_complete(foo())
@@ -73,7 +74,8 @@ variables = {
 
 async def foo():
     client = GraphQLClient('https://example.com/graphql/')
-    await client.execute(query, variables=variables)
+    response = await client.execute(query, variables=variables)
+    print(await response.json())
 ```
 
 ### Multiple file upload
@@ -101,5 +103,6 @@ variables = {
 
 async def foo():
     client = GraphQLClient('https://example.com/graphql/')
-    await client.execute(query, variables=variables)
+    response = await client.execute(query, variables=variables)
+    print(await response.json())
 ```
