@@ -9,6 +9,12 @@ class GraphQLClient:
         self.endpoint = endpoint
         self.headers = headers or {}
 
+    def prepare_headers(self):
+        headers = self.headers
+        if aiohttp.hdrs.ACCEPT not in headers:
+            headers[aiohttp.hdrs.ACCEPT] = 'application/json'
+        return headers
+
     @classmethod
     def prepare_json_data(cls, query: str, variables: dict = None, operation: str = None) -> dict:
         data = {'query': query}
@@ -48,11 +54,13 @@ class GraphQLClient:
         return data
 
     async def execute(self, query: str, variables: dict = None, operation: str = None) -> aiohttp.ClientResponse:
-        async with aiohttp.ClientSession(headers=self.headers) as session:
+        async with aiohttp.ClientSession() as session:
             if variables and contains_file_variable(variables):
                 data = self.prepare_multipart(query, variables, operation)
+                headers = self.prepare_headers()
             else:
-                data = self.prepare_json_data(query, variables, operation)
-            async with session.post(self.endpoint, data=data) as response:
+                data = json.dumps(self.prepare_json_data(query, variables, operation))
+                headers = self.prepare_headers()
+            async with session.post(self.endpoint, data=data, headers=headers) as response:
                 await response.json()
                 return response
