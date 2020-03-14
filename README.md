@@ -32,7 +32,7 @@ query = '''
 '''
 
 async def foo():
-    client = GraphQLClient('https://graphql.org/swapi-graphql/')
+    client = GraphQLClient('https://swapi.graph.cool/')
     response = await client.execute(query)
     print(await response.json())
 
@@ -46,7 +46,7 @@ if __name__ == '__main__':
 from aiogqlc import GraphQLClient
 
 headers = {
-    'Authorization': 'Token <your-token-here>' 
+    'Authorization': 'Token <your-token-here>'
 }
 
 client = GraphQLClient('https://example.com/graphql/', headers=headers)
