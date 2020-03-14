@@ -1,5 +1,6 @@
 import aiohttp
 import json
+import copy
 from typing import Tuple
 from aiogqlc.utils import is_file_like, is_file_list_like, contains_file_variable, null_file_variables
 
@@ -10,7 +11,7 @@ class GraphQLClient:
         self.headers = headers or {}
 
     def prepare_headers(self):
-        headers = self.headers
+        headers = copy.deepcopy(self.headers)
         if aiohttp.hdrs.ACCEPT not in headers:
             headers[aiohttp.hdrs.ACCEPT] = 'application/json'
         return headers
