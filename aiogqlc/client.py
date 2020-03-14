@@ -63,5 +63,5 @@ class GraphQLClient:
                 headers = self.prepare_headers()
                 headers[aiohttp.hdrs.CONTENT_TYPE] = 'application/json'
             async with session.post(self.endpoint, data=data, headers=headers) as response:
-                await response.json()
+                await response.read()
                 return response
