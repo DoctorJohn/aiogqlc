@@ -26,7 +26,7 @@ from aiogqlc import GraphQLClient
 query = '''
     query {
         allFilms {
-            totalCount
+            title
         }
     }
 '''
