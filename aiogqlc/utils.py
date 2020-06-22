@@ -7,7 +7,10 @@ def is_file_like(variable: Any) -> bool:
 
 
 def is_file_list_like(variable: Any) -> bool:
-    return isinstance(variable, list) and all(isinstance(item, io.IOBase) for item in variable)
+    # True if variable is a non-empty list of io.IOBase instances
+    return isinstance(variable, list) \
+        and variable \
+        and all(isinstance(item, io.IOBase) for item in variable)
 
 
 def is_file_variable(variable: Any) -> bool:
