@@ -106,3 +106,11 @@ async def foo():
     response = await client.execute(query, variables=variables)
     print(await response.json())
 ```
+
+## Contributing
+
+After cloning the repo and creating/entering an dedicated virtual environment, you may run `pip install -e ".[dev]"` to install development dependencies.
+
+Make sure to run `black aiogqlc setup.py` and `flake8 aiogqlc setup.py` before commiting your changes.
+
+Note that if you have `make` installed, you may run the following recipes instead of the commands named above: `make install-dev`, `make format`, `make lint`.
