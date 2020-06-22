@@ -8,9 +8,11 @@ def is_file_like(variable: Any) -> bool:
 
 def is_file_list_like(variable: Any) -> bool:
     # True if variable is a non-empty list of io.IOBase instances
-    return isinstance(variable, list) \
-        and variable \
+    return (
+        isinstance(variable, list)
+        and variable
         and all(isinstance(item, io.IOBase) for item in variable)
+    )
 
 
 def is_file_variable(variable: Any) -> bool:
@@ -25,7 +27,9 @@ def contains_file_variable(variables: dict) -> bool:
 
 
 def filter_file_items(variables: dict) -> dict:
-    return {key: value for key, value in variables.items() if not is_file_variable(value)}
+    return {
+        key: value for key, value in variables.items() if not is_file_variable(value)
+    }
 
 
 def null_file_variables(variables: dict) -> dict:
