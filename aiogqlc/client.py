@@ -1,6 +1,5 @@
 import aiohttp
 import json
-import copy
 from typing import Tuple
 from aiogqlc.utils import is_file_like
 
