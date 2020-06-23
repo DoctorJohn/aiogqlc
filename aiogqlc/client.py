@@ -10,11 +10,15 @@ class GraphQLClient:
         self.endpoint = endpoint
         self.headers = headers or {}
 
-    def prepare_headers(self):
-        headers = copy.deepcopy(self.headers)
-        if aiohttp.hdrs.ACCEPT not in headers:
-            headers[aiohttp.hdrs.ACCEPT] = "application/json"
-        return headers
+    async def __aenter__(self):
+        self.session = aiohttp.ClientSession(
+            headers={**{aiohttp.hdrs.ACCEPT: "application/json"},
+                     **self.headers})
+        await self.session.__aenter__()
+        return self
+
+    async def __aexit__(self, *args):
+        await self.session.__aexit__(*args)
 
     @classmethod
     def prepare_json_data(
@@ -90,25 +94,23 @@ class GraphQLClient:
     async def execute(
         self, query: str, variables: dict = None, operation: str = None
     ) -> aiohttp.ClientResponse:
-        async with aiohttp.ClientSession() as session:
-            headers = self.prepare_headers()
+        nulled_variables, files = self.prepare(variables)
 
-            nulled_variables, files = self.prepare(variables)
+        headers = {}
+        if not files:
+            # normal GraphQL case: just send the query as JSON.
+            # nulled_variables should == variables here
+            data = json.dumps(self.prepare_json_data(query, variables, operation))
+            headers[aiohttp.hdrs.CONTENT_TYPE] = "application/json"
+        else:
+            # file-uploading extension case:
+            # send the query as JSON inside the first multipart form upload
+            # followed by a header for the files, then the files themselves.
+            data = self.prepare_multipart(query, nulled_variables, files, operation)
+            #headers[aiohttp.hdrs.CONTENT_TYPE] = "multipart/form-data", but let the library handle that
 
-            if not files:
-                # normal GraphQL case: just send the query as JSON.
-                # nulled_variables should == variables here
-                data = json.dumps(self.prepare_json_data(query, variables, operation))
-                headers[aiohttp.hdrs.CONTENT_TYPE] = "application/json"
-            else:
-                # file-uploading extension case:
-                # send the query as JSON inside the first multipart form upload
-                # followed by a header for the files, then the files themselves.
-                data = self.prepare_multipart(query, nulled_variables, files, operation)
-                #headers[aiohttp.hdrs.CONTENT_TYPE] = "multipart/form-data", but let the library handle that
-
-            async with session.post(
-                self.endpoint, data=data, headers=headers
-            ) as response:
-                await response.read()
-                return response
+        async with self.session.post(
+            self.endpoint, data=data, headers=headers
+        ) as response:
+            await response.read()
+            return response
