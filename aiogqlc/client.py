@@ -2,12 +2,7 @@ import aiohttp
 import json
 import copy
 from typing import Tuple
-from aiogqlc.utils import (
-    is_file_like,
-    is_file_list_like,
-    contains_file_variable,
-    null_file_variables,
-)
+from aiogqlc.utils import is_file_like
 
 
 class GraphQLClient:
