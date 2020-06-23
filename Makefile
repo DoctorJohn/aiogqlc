@@ -4,10 +4,10 @@ install-dev:
 	pip install -e ".[dev]"
 
 format:
-	black aiogqlc setup.py
+	black aiogqlc examples setup.py
 
 lint:
-	flake8 aiogqlc setup.py
+	flake8 aiogqlc examples setup.py
 
 release:
 	python3 setup.py sdist bdist_wheel
