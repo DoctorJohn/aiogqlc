@@ -20,8 +20,8 @@ A Python asynchronous/IO GraphQL client based on `aiohttp` that supports the [Gr
 
 ```python
 import asyncio
+import aiohttp
 from aiogqlc import GraphQLClient
-
 
 query = '''
     query {
@@ -32,9 +32,10 @@ query = '''
 '''
 
 async def foo():
-    client = GraphQLClient('https://swapi.graph.cool/')
-    response = await client.execute(query)
-    print(await response.json())
+    async with aiohttp.ClientSession() as session:
+        client = GraphQLClient('https://swapi.graph.cool/', session=session)
+        response = await client.execute(query)
+        print(await response.json())
 
 if __name__ == '__main__':
     asyncio.get_event_loop().run_until_complete(foo())
@@ -43,18 +44,22 @@ if __name__ == '__main__':
 ### Adding authorization headers
 
 ```python
+import aiohttp
 from aiogqlc import GraphQLClient
 
 headers = {
     'Authorization': 'Token <your-token-here>'
 }
 
-client = GraphQLClient('https://example.com/graphql/', headers=headers)
+async def foo():
+    async with aiohttp.ClientSession(headers=headers) as session:
+        client = GraphQLClient('https://example.com/graphql/', session=session)
 ```
 
 ### Single file upload
 
 ```python
+import aiohttp
 from aiogqlc import GraphQLClient
 
 query = '''
@@ -73,14 +78,16 @@ variables = {
 }
 
 async def foo():
-    client = GraphQLClient('https://example.com/graphql/')
-    response = await client.execute(query, variables=variables)
-    print(await response.json())
+    async with aiohttp.ClientSession() as session:
+        client = GraphQLClient('https://example.com/graphql/', session=session)
+        response = await client.execute(query, variables=variables)
+        print(await response.json())
 ```
 
 ### Multiple file upload
 
 ```python
+import aiohttp
 from aiogqlc import GraphQLClient
 
 query = '''
@@ -102,9 +109,10 @@ variables = {
 }
 
 async def foo():
-    client = GraphQLClient('https://example.com/graphql/')
-    response = await client.execute(query, variables=variables)
-    print(await response.json())
+    async with aiohttp.ClientSession() as session:
+        client = GraphQLClient('https://example.com/graphql/', session=session)
+        response = await client.execute(query, variables=variables)
+        print(await response.json())
 ```
 
 ## Contributing
