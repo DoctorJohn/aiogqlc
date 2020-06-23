@@ -6,14 +6,16 @@ from aiogqlc.utils import is_file_like
 
 
 class GraphQLClient:
-    def __init__(self, endpoint: str, headers: dict = None) -> None:
+    def __init__(self, endpoint: str, headers: dict = None, cookies: dict = None) -> None:
         self.endpoint = endpoint
         self.headers = headers or {}
+        self.cookies = cookies or {}
 
     async def __aenter__(self):
         self.session = aiohttp.ClientSession(
             headers={**{aiohttp.hdrs.ACCEPT: "application/json"},
-                     **self.headers})
+                     **self.headers},
+            cookies=self.cookies)
         await self.session.__aenter__()
         return self
 
