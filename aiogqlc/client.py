@@ -6,16 +6,18 @@ from aiogqlc.utils import is_file_like
 
 
 class GraphQLClient:
-    def __init__(self, endpoint: str, headers: dict = None, cookies: dict = None) -> None:
+    def __init__(
+        self, endpoint: str, headers: dict = None, cookies: dict = None
+    ) -> None:
         self.endpoint = endpoint
         self.headers = headers or {}
         self.cookies = cookies or {}
 
     async def __aenter__(self):
         self.session = aiohttp.ClientSession(
-            headers={**{aiohttp.hdrs.ACCEPT: "application/json"},
-                     **self.headers},
-            cookies=self.cookies)
+            headers={**{aiohttp.hdrs.ACCEPT: "application/json"}, **self.headers},
+            cookies=self.cookies,
+        )
         await self.session.__aenter__()
         return self
 
@@ -41,6 +43,7 @@ class GraphQLClient:
     @classmethod
     def prepare(cls, variables: dict) -> Tuple[dict, dict, list]:
         files = {}
+
         def extract_files(path, obj):
             """
             recursively traverse obj, doing a deepcopy, but
@@ -51,14 +54,14 @@ class GraphQLClient:
             if type(obj) is list:
                 nulled_obj = []
                 for key, value in enumerate(obj):
-                    value = extract_files(f'{path}.{key}', value)
+                    value = extract_files(f"{path}.{key}", value)
                     nulled_obj.append(value)
                 # TODO: merge this with dict case below. somehow.
                 return nulled_obj
             elif type(obj) is dict:
                 nulled_obj = {}
                 for key, value in obj.items():
-                    value = extract_files(f'{path}.{key}', value)
+                    value = extract_files(f"{path}.{key}", value)
                     nulled_obj[key] = value
                 return nulled_obj
             elif is_file_like(obj):
@@ -68,6 +71,7 @@ class GraphQLClient:
             else:
                 # base case: pass through unchanged
                 return obj
+
         nulled_variables = extract_files("variables", variables)
 
         return nulled_variables, files
@@ -83,10 +87,10 @@ class GraphQLClient:
         # an extra ID -- the *index* of the file in the *ordered* dict -- to link them.
         # (the reason the spec adds the extra indirection is to allow multiple pointers
         # to the same file. To save bandwidth):
-        file_map     = {str(i): [path] for i,path in enumerate(files)}      # header
-          # path is nested in a list because the spec allows multiple pointers to the same file.
-          # But we don't use that.
-        file_streams = {str(i): files[path] for i,path in enumerate(files)} # payload
+        file_map = {str(i): [path] for i, path in enumerate(files)}  # header
+        # path is nested in a list because the spec allows multiple pointers to the same file.
+        # But we don't use that.
+        file_streams = {str(i): files[path] for i, path in enumerate(files)}  # payload
 
         data.add_field("operations", operations_json, content_type="application/json")
         data.add_field("map", json.dumps(file_map), content_type="application/json")
@@ -109,7 +113,7 @@ class GraphQLClient:
             # send the query as JSON inside the first multipart form upload
             # followed by a header for the files, then the files themselves.
             data = self.prepare_multipart(query, nulled_variables, files, operation)
-            #headers[aiohttp.hdrs.CONTENT_TYPE] = "multipart/form-data", but let the library handle that
+            # headers[aiohttp.hdrs.CONTENT_TYPE] = "multipart/form-data", but let the library handle that
 
         async with self.session.post(
             self.endpoint, data=data, headers=headers
