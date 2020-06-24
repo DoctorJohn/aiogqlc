@@ -1,4 +1,5 @@
 import asyncio
+import aiohttp
 from aiogqlc import GraphQLClient
 
 query = """
@@ -11,7 +12,8 @@ query = """
 
 
 async def main():
-    async with GraphQLClient("https://swapi.graph.cool") as client:
+    async with aiohttp.ClientSession() as session:
+        client = GraphQLClient(session, "https://swapi.graph.cool")
         response = await client.execute(query)
         print(await response.json())
 
