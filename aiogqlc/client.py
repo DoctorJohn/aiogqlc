@@ -101,21 +101,18 @@ class GraphQLClient:
     ) -> aiohttp.ClientResponse:
         nulled_variables, files = self.prepare(variables)
 
-        headers = {}
-        if not files:
-            # normal GraphQL case: just send the query as JSON.
-            # nulled_variables should == variables here
-            data = json.dumps(self.prepare_json_data(query, variables, operation))
-            headers[aiohttp.hdrs.CONTENT_TYPE] = "application/json"
-        else:
+        if files:
             # file-uploading extension case:
             # send the query as JSON inside the first multipart form upload
             # followed by a header for the files, then the files themselves.
             data = self.prepare_multipart(query, nulled_variables, files, operation)
-            # headers[aiohttp.hdrs.CONTENT_TYPE] = "multipart/form-data", but let the library handle that
+            data_param = {"data": data}
+        else:
+            # normal GraphQL case: just send the query as JSON.
+            # nulled_variables should == variables here
+            data = self.prepare_json_data(query, variables, operation)
+            data_param = {"json": data}
 
-        async with self.session.post(
-            self.endpoint, data=data, headers=headers
-        ) as response:
+        async with self.session.post(self.endpoint, **data_param) as response:
             await response.read()
             return response
