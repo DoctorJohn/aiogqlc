@@ -5,9 +5,9 @@ from aiogqlc.utils import is_file_like
 
 
 class GraphQLClient:
-    def __init__(self, session: aiohttp.ClientSession, endpoint: str) -> None:
-        self.session = session
+    def __init__(self, endpoint: str, session: aiohttp.ClientSession) -> None:
         self.endpoint = endpoint
+        self.session = session
 
     @classmethod
     def prepare_json_data(

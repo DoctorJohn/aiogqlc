@@ -13,7 +13,7 @@ query = """
 
 async def main():
     async with aiohttp.ClientSession() as session:
-        client = GraphQLClient(session, "https://swapi.graph.cool")
+        client = GraphQLClient("https://swapi.graph.cool", session=session)
         response = await client.execute(query)
         print(await response.json())
 
