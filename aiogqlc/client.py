@@ -13,16 +13,16 @@ class GraphQLClient:
     def prepare_json_data(
         cls, query: str, variables: dict = None, operation: str = None
     ) -> dict:
-        '''
+        """
         variables must be serializable; in particular,
         it should have already been run through prepare() in case
         it had filestreams in it.
-        '''
-        data = {'query': query}
+        """
+        data = {"query": query}
         if variables:
-            data['variables'] = variables
+            data["variables"] = variables
         if operation:
-            data['operationName'] = operation
+            data["operationName"] = operation
         return data
 
     @classmethod
@@ -30,23 +30,23 @@ class GraphQLClient:
         files = {}
 
         def extract_files(path, obj):
-            '''
+            """
             recursively traverse obj, doing a deepcopy, but
             replacing any file-like objects with nulls and
             shunting the originals off to the side.
-            '''
+            """
             nonlocal files
             if type(obj) is list:
                 nulled_obj = []
                 for key, value in enumerate(obj):
-                    value = extract_files(f'{path}.{key}', value)
+                    value = extract_files(f"{path}.{key}", value)
                     nulled_obj.append(value)
                 # TODO: merge this with dict case below. somehow.
                 return nulled_obj
             elif type(obj) is dict:
                 nulled_obj = {}
                 for key, value in obj.items():
-                    value = extract_files(f'{path}.{key}', value)
+                    value = extract_files(f"{path}.{key}", value)
                     nulled_obj[key] = value
                 return nulled_obj
             elif is_file_like(obj):
@@ -57,7 +57,7 @@ class GraphQLClient:
                 # base case: pass through unchanged
                 return obj
 
-        nulled_variables = extract_files('variables', variables)
+        nulled_variables = extract_files("variables", variables)
 
         return nulled_variables, files
 
@@ -77,8 +77,8 @@ class GraphQLClient:
         # But we don't use that.
         file_streams = {str(i): files[path] for i, path in enumerate(files)}  # payload
 
-        data.add_field('operations', operations_json, content_type='application/json')
-        data.add_field('map', json.dumps(file_map), content_type='application/json')
+        data.add_field("operations", operations_json, content_type="application/json")
+        data.add_field("map", json.dumps(file_map), content_type="application/json")
         data.add_fields(*file_streams.items())
         return data
 
@@ -92,12 +92,12 @@ class GraphQLClient:
             # send the query as JSON inside the first multipart form upload
             # followed by a header for the files, then the files themselves.
             data = self.prepare_multipart(query, nulled_variables, files, operation)
-            data_param = {'data': data}
+            data_param = {"data": data}
         else:
             # normal GraphQL case: just send the query as JSON.
             # nulled_variables should == variables here
             data = self.prepare_json_data(query, variables, operation)
-            data_param = {'json': data}
+            data_param = {"json": data}
 
         async with self.session.post(self.endpoint, **data_param) as response:
             await response.read()
