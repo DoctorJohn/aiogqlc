@@ -118,8 +118,19 @@ async def foo():
 
 ## Contributing
 
-After cloning the repo and creating/entering an dedicated virtual environment, you may run `pip install -e ".[dev]"` to install development dependencies.
+### Quickstart
 
-Make sure to run `black aiogqlc setup.py` and `flake8 aiogqlc setup.py` before commiting your changes.
+1. Clone the repo
+2. Create and enter a dedicated virtual environment
+3. Run `make install-dev` to install dev dependencies and a formatting pre-commit hook.
 
-Note that if you have `make` installed, you may run the following recipes instead of the commands named above: `make install-dev`, `make format`, `make lint`.
+### Individual commands
+
+Run `pip install -r ".[dev]"` to install dev dependencies.
+
+Run `black aiogqlc setup.py` or `make format` to format the code.
+
+Run `flake8 aiogqlc setup.py` or `make lint` to lint the code.
+
+Run `pre-commit install` to install a formatting pre-commit hook.
+

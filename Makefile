@@ -2,6 +2,7 @@
 
 install-dev:
 	pip install -e ".[dev]"
+	pre-commit install
 
 format:
 	black aiogqlc examples setup.py
