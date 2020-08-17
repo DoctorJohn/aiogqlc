@@ -10,6 +10,12 @@ format:
 lint:
 	flake8 aiogqlc examples setup.py
 
+test:
+	py.test aiogqlc --cov=aiogqlc -vv
+
+test-with-tox:
+	tox
+
 release:
 	python3 setup.py sdist bdist_wheel
 	twine upload dist/*

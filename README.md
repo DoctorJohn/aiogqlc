@@ -122,12 +122,16 @@ async def foo():
 
 1. Clone the repo
 2. Create and enter a dedicated virtual environment
-3. Run `make install-dev` to install dev dependencies and a formatting pre-commit hook.
+3. Run `make install-dev` to install dev dependencies and a pre-commit hook that automatically formats code.
 
-### Individual commands
+If you do not have `make` installed, either install it or take a look at the `Makefile` to find out how to run individual commands manually.
 
-- Run `pip install -r ".[dev]"` to install dev dependencies.
-- Run `black aiogqlc setup.py` or `make format` to format the code.
-- Run `flake8 aiogqlc setup.py` or `make lint` to lint the code.
-- Run `pre-commit install` to install a formatting pre-commit hook.
+### Formatting and linting
+
+- Run `make format` to format the code.
+- Run `make lint` to lint the code.
+
+### Testing
+- Run `make test` to run all tests in your local environment.
+- Run `make test-with-tox` to run all tests with all supported python versions.
 
