@@ -1,6 +1,7 @@
 # Asynchronous/IO GraphQL client
 
 ![PyPI](https://img.shields.io/pypi/v/aiogqlc)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/aiogqlc)
 ![PyPI - License](https://img.shields.io/pypi/l/aiogqlc)
 
 A Python asynchronous/IO GraphQL client based on `aiohttp` that supports the [GraphQL multipart form requests spec](https://github.com/jaydenseric/graphql-multipart-request-spec) for file uploads.
