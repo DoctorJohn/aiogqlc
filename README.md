@@ -126,11 +126,8 @@ async def foo():
 
 ### Individual commands
 
-Run `pip install -r ".[dev]"` to install dev dependencies.
-
-Run `black aiogqlc setup.py` or `make format` to format the code.
-
-Run `flake8 aiogqlc setup.py` or `make lint` to lint the code.
-
-Run `pre-commit install` to install a formatting pre-commit hook.
+- Run `pip install -r ".[dev]"` to install dev dependencies.
+- Run `black aiogqlc setup.py` or `make format` to format the code.
+- Run `flake8 aiogqlc setup.py` or `make lint` to lint the code.
+- Run `pre-commit install` to install a formatting pre-commit hook.
 
