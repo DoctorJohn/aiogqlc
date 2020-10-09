@@ -3,30 +3,27 @@ from aiogqlc import GraphQLClient
 
 # Third party libraries
 import aiohttp
-from aioextensions import (
-    run_decorator,
-)
+from aioextensions import run_decorator
 
 
 @run_decorator
 async def test_client() -> None:
     async with aiohttp.ClientSession(headers={"x-foo": "bar"}) as session:
-        client = GraphQLClient(
-            endpoint="https://swapi.graph.cool",
-            session=session,
-        )
+        client = GraphQLClient(endpoint="https://swapi.graph.cool", session=session,)
 
         assert client.endpoint == "https://swapi.graph.cool"
         assert client.session is session
         assert client.session._default_headers["x-foo"] == "bar"
 
-        response: aiohttp.ClientResponse = await client.execute("""
+        response: aiohttp.ClientResponse = await client.execute(
+            """
             query {
                 allFilms {
                     title
                 }
             }
-        """)
+        """
+        )
 
         assert await response.json() == {
             "data": {
