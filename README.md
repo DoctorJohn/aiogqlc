@@ -8,8 +8,8 @@ A Python asynchronous/IO GraphQL client based on `aiohttp` that supports the [Gr
 
 ## Requirements
 
-- Python 3
-- [aiohttp](https://pypi.org/project/aiohttp/)
+- Python (>=3.6)
+- [aiohttp](https://pypi.org/project/aiohttp/) (>=3.6.0)
 
 ## Installation
 
