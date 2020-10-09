@@ -1,40 +1,14 @@
-# Local libraries
-from aiogqlc import GraphQLClient
-
-# Third party libraries
+import pytest
 import aiohttp
-from aioextensions import run_decorator
+from aiogqlc import GraphQLClient
+from aiogqlc.tests import TEST_ENDPOINT
 
 
-@run_decorator
-async def test_client() -> None:
-    async with aiohttp.ClientSession(headers={"x-foo": "bar"}) as session:
-        client = GraphQLClient(endpoint="https://swapi.graph.cool", session=session,)
-
-        assert client.endpoint == "https://swapi.graph.cool"
+@pytest.mark.asyncio
+async def test_client_init():
+    headers = {"x-foo": "bar"}
+    async with aiohttp.ClientSession(headers=headers) as session:
+        client = GraphQLClient(endpoint=TEST_ENDPOINT, session=session)
         assert client.session is session
         assert client.session._default_headers["x-foo"] == "bar"
-
-        response: aiohttp.ClientResponse = await client.execute(
-            """
-            query {
-                allFilms {
-                    title
-                }
-            }
-        """
-        )
-
-        assert await response.json() == {
-            "data": {
-                "allFilms": [
-                    {"title": "A New Hope"},
-                    {"title": "Attack of the Clones"},
-                    {"title": "The Phantom Menace"},
-                    {"title": "Revenge of the Sith"},
-                    {"title": "Return of the Jedi"},
-                    {"title": "The Empire Strikes Back"},
-                    {"title": "The Force Awakens"},
-                ],
-            },
-        }
+        assert client.endpoint == TEST_ENDPOINT
