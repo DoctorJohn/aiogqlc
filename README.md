@@ -126,6 +126,32 @@ async def foo():
         print(await response.json())
 ```
 
+### Selecting an operation
+
+```python
+import aiohttp
+from aiogqlc import GraphQLClient
+
+query = '''
+    query Operation1 {
+        allFilms {
+            id
+        }
+    }
+    query Operation2 {
+        film(id: 1) {
+            id
+        }
+    }
+'''
+
+async def foo():
+    async with aiohttp.ClientSession() as session:
+        client = GraphQLClient('https://example.com/graphql/', session=session)
+        response = await client.execute(query, operation='Operation2')
+        print(await response.json())
+```
+
 ## Contributing
 
 ### Quickstart
