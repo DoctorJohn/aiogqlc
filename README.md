@@ -1,8 +1,18 @@
 # Asynchronous/IO GraphQL client
 
-[![PyPI](https://img.shields.io/pypi/v/aiogqlc)](https://pypi.org/project/aiogqlc/)
-[![PyPI - Downloads](https://img.shields.io/pypi/dm/aiogqlc)](https://pypi.org/project/aiogqlc/)
-[![PyPI - License](https://img.shields.io/pypi/l/aiogqlc)](https://github.com/DoctorJohn/aiogqlc/blob/master/LICENSE)
+[![PyPI][pypi-image]][pypi-url]
+[![Downloads][downloads-image]][downloads-url]
+[![License][license-image]][license-url]
+[![Tests][tests-image]][tests-url]
+
+[pypi-image]: https://img.shields.io/pypi/v/aiogqlc
+[pypi-url]: https://pypi.org/project/aiogqlc/
+[downloads-image]: https://img.shields.io/pypi/dm/aiogqlc
+[downloads-url]: https://pypi.org/project/aiogqlc/
+[license-image]: https://img.shields.io/pypi/l/aiogqlc
+[license-url]: https://github.com/DoctorJohn/aiogqlc/blob/master/LICENSE
+[tests-image]: https://github.com/DoctorJohn/aiogqlc/workflows/Tests/badge.svg
+[tests-url]: https://github.com/DoctorJohn/aiogqlc/actions
 
 A Python asynchronous/IO GraphQL client based on `aiohttp` that supports the [GraphQL multipart form requests spec](https://github.com/jaydenseric/graphql-multipart-request-spec) for file uploads.
 
