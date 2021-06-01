@@ -102,3 +102,25 @@ async def test_query_object_with_nested_fields():
         assert await response.json() == {
             "data": {"todo": {"id": "1", "creator": {"id": "1", "name": "Amelia"}}}
         }
+
+
+@pytest.mark.asyncio
+async def test_selecting_an_operation():
+    async with aiohttp.ClientSession() as session:
+        query = """
+            query Operation1 {
+                todos {
+                    id
+                }
+            }
+            query Operation2 {
+                todo(id: 1) {
+                    id
+                }
+            }
+        """
+
+        client = GraphQLClient(endpoint=TEST_ENDPOINT, session=session)
+        response = await client.execute(query, operation="Operation2")
+
+        assert await response.json() == {"data": {"todo": {"id": "1"}}}
