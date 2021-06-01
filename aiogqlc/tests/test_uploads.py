@@ -1,5 +1,5 @@
-import pytest
 import aiohttp
+import pytest
 from aiogqlc import GraphQLClient
 from aiogqlc.tests import TEST_ENDPOINT
 
