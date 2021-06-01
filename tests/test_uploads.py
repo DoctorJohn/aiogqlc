@@ -1,120 +1,66 @@
-import aiohttp
-import pytest
+from io import BytesIO
+
 from aiogqlc import GraphQLClient
-from tests import TEST_ENDPOINT
 
 
-def create_test_file(tmp_path, filename):
-    test_file_content = "hello world"
-    test_file = tmp_path / filename
-    test_file.write_text(test_file_content)
-    return test_file
+async def test_single_file_upload(graphql_session):
+    file1 = BytesIO(b"Hello, World!")
 
-
-@pytest.mark.asyncio
-async def test_single_file_upload(tmp_path):
-    async with aiohttp.ClientSession() as session:
-        filename = "file1.txt"
-        test_file = create_test_file(tmp_path, filename)
-
-        query = """
-            mutation($file: Upload!) {
-                uploadFile(file: $file) {
-                    filename
-                    mimetype
-                    encoding
-                }
-            }
-        """
-        variables = {"file": test_file.open()}
-
-        client = GraphQLClient(endpoint=TEST_ENDPOINT, session=session)
-        response = await client.execute(query, variables=variables)
-
-        assert await response.json() == {
-            "data": {
-                "uploadFile": {
-                    "filename": filename,
-                    "mimetype": "text/plain",
-                    "encoding": "7bit",
-                }
-            }
+    query = """
+        mutation($file: Upload!) {
+            readFile(file: $file)
         }
+    """
+    variables = {"file": file1}
+
+    client = GraphQLClient(endpoint="/graphql", session=graphql_session)
+    response = await client.execute(query, variables=variables)
+
+    assert await response.json() == {"data": {"readFile": "Hello, World!"}}
 
 
-@pytest.mark.asyncio
-async def test_file_list_upload(tmp_path):
-    async with aiohttp.ClientSession() as session:
-        filename1 = "file1.txt"
-        filename2 = "file2.txt"
-        test_file1 = create_test_file(tmp_path, filename1).open()
-        test_file2 = create_test_file(tmp_path, filename2).open()
+async def test_file_list_upload(graphql_session):
+    file1 = BytesIO(b"Hello, Foo!")
+    file2 = BytesIO(b"Hello, Bar!")
 
-        query = """
-            mutation($files: [Upload!]!) {
-                uploadFiles(files: $files) {
-                    filename
-                    mimetype
-                    encoding
-                }
-            }
-        """
-        variables = {"files": [test_file1, test_file2]}
-
-        client = GraphQLClient(endpoint=TEST_ENDPOINT, session=session)
-        response = await client.execute(query, variables=variables)
-
-        assert await response.json() == {
-            "data": {
-                "uploadFiles": [
-                    {
-                        "filename": filename1,
-                        "mimetype": "text/plain",
-                        "encoding": "7bit",
-                    },
-                    {
-                        "filename": filename2,
-                        "mimetype": "text/plain",
-                        "encoding": "7bit",
-                    },
-                ]
-            }
+    query = """
+        mutation($files: [Upload!]!) {
+            readFiles(files: $files)
         }
+    """
+    variables = {"files": [file1, file2]}
 
+    client = GraphQLClient(endpoint="/graphql", session=graphql_session)
+    response = await client.execute(query, variables=variables)
 
-@pytest.mark.asyncio
-async def test_using_in_single_file_under_multiple_paths(tmp_path):
-    async with aiohttp.ClientSession() as session:
-        filename1 = "file1.txt"
-        test_file1 = create_test_file(tmp_path, filename1).open()
-
-        query = """
-            mutation($files: [Upload!]!) {
-                uploadFiles(files: $files) {
-                    filename
-                    mimetype
-                    encoding
-                }
-            }
-        """
-        variables = {"files": [test_file1, test_file1]}
-
-        client = GraphQLClient(endpoint=TEST_ENDPOINT, session=session)
-        response = await client.execute(query, variables=variables)
-
-        assert await response.json() == {
-            "data": {
-                "uploadFiles": [
-                    {
-                        "filename": filename1,
-                        "mimetype": "text/plain",
-                        "encoding": "7bit",
-                    },
-                    {
-                        "filename": filename1,
-                        "mimetype": "text/plain",
-                        "encoding": "7bit",
-                    },
-                ]
-            }
+    assert await response.json() == {
+        "data": {
+            "readFiles": [
+                "Hello, Foo!",
+                "Hello, Bar!",
+            ]
         }
+    }
+
+
+async def test_using_in_single_file_under_multiple_paths(graphql_session, tmp_path):
+    file1 = BytesIO(b"Hello, World!")
+
+    query = """
+        mutation($files: [Upload!]!) {
+            readFiles(files: $files)
+        }
+    """
+    variables = {"files": [file1, file1]}
+
+    client = GraphQLClient(endpoint="/graphql", session=graphql_session)
+    response = await client.execute(query, variables=variables)
+
+    assert await response.json() == {
+        "data": {
+            "readFiles": [
+                "Hello, World!",
+                "Hello, World!",
+            ]
+        }
+    }
