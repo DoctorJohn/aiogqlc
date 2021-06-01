@@ -41,7 +41,7 @@ async def test_single_file_upload(tmp_path):
 
 
 @pytest.mark.asyncio
-async def test_multiple_file_upload(tmp_path):
+async def test_file_list_upload(tmp_path):
     async with aiohttp.ClientSession() as session:
         filename1 = "file1.txt"
         filename2 = "file2.txt"
@@ -76,3 +76,41 @@ async def test_multiple_file_upload(tmp_path):
             }
         }
         assert await response.json() == expected
+
+
+@pytest.mark.asyncio
+async def test_using_in_single_file_under_multiple_paths(tmp_path):
+    async with aiohttp.ClientSession() as session:
+        filename1 = "file1.txt"
+        test_file1 = create_test_file(tmp_path, filename1).open()
+
+        query = """
+            mutation($files: [Upload!]!) {
+                uploadFiles(files: $files) {
+                    filename
+                    mimetype
+                    encoding
+                }
+            }
+        """
+        variables = {"files": [test_file1, test_file1]}
+
+        client = GraphQLClient(endpoint=TEST_ENDPOINT, session=session)
+        response = await client.execute(query, variables=variables)
+
+        assert await response.json() == {
+            "data": {
+                "uploadFiles": [
+                    {
+                        "filename": filename1,
+                        "mimetype": "text/plain",
+                        "encoding": "7bit",
+                    },
+                    {
+                        "filename": filename1,
+                        "mimetype": "text/plain",
+                        "encoding": "7bit",
+                    },
+                ]
+            }
+        }

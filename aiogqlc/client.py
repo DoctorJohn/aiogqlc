@@ -1,6 +1,6 @@
 import json
 from io import IOBase
-from typing import Any, Tuple
+from typing import Any, Dict, List, Tuple
 
 import aiohttp
 
@@ -13,10 +13,12 @@ class GraphQLClient:
     async def execute(
         self, query: str, variables: dict = None, operation: str = None
     ) -> aiohttp.ClientResponse:
-        nulled_variables, files = self.prepare(variables)
+        nulled_variables, files_to_paths_mapping = self.prepare(variables)
 
-        if files:
-            data = self.prepare_multipart(query, nulled_variables, files, operation)
+        if files_to_paths_mapping:
+            data = self.prepare_multipart(
+                query, nulled_variables, files_to_paths_mapping, operation
+            )
             data_param = {"data": data}
         else:
             data = self.prepare_json_data(query, variables, operation)
@@ -27,8 +29,8 @@ class GraphQLClient:
             return response
 
     @classmethod
-    def prepare(cls, variables: dict) -> Tuple[dict, dict]:
-        files = {}
+    def prepare(cls, variables: dict) -> Tuple[dict, Dict[IOBase, List[str]]]:
+        files_to_paths_mapping: Dict[IOBase, List[str]] = {}
 
         def separate_files(path: str, obj: object) -> Any:
             if isinstance(obj, list):
@@ -46,24 +48,34 @@ class GraphQLClient:
                 return nulled_dict
 
             elif isinstance(obj, IOBase):
-                files[path] = obj
+                if obj in files_to_paths_mapping:
+                    files_to_paths_mapping[obj].append(path)
+                else:
+                    files_to_paths_mapping[obj] = [path]
                 return None
 
             else:
                 return obj
 
         nulled_variables = separate_files("variables", variables)
-        return nulled_variables, files
+        return nulled_variables, files_to_paths_mapping
 
     @classmethod
     def prepare_multipart(
-        cls, query: str, variables: dict, files: dict, operation: str = None
+        cls,
+        query: str,
+        variables: dict,
+        files_to_paths_mapping: Dict[IOBase, List[str]],
+        operation: str = None,
     ) -> aiohttp.FormData:
         form_data = aiohttp.FormData()
         operations = cls.prepare_json_data(query, variables, operation)
 
-        file_map = {str(i): [path] for i, path in enumerate(files)}
-        file_streams = {str(i): files[path] for i, path in enumerate(files)}
+        file_map = {
+            str(i): files_to_paths_mapping[file]
+            for i, file in enumerate(files_to_paths_mapping)
+        }
+        file_streams = {str(i): file for i, file in enumerate(files_to_paths_mapping)}
 
         form_data.add_field(
             "operations", json.dumps(operations), content_type="application/json"
