@@ -1,13 +1,12 @@
 import aiohttp
 import pytest
 from aiogqlc import GraphQLClient
-from aiogqlc.tests import TEST_ENDPOINT
+from tests import TEST_ENDPOINT
 
 
 @pytest.mark.asyncio
 async def test_mutation_with_flat_response():
     async with aiohttp.ClientSession() as session:
-        client = GraphQLClient(endpoint=TEST_ENDPOINT, session=session)
         query = """
             mutation {
                 createUser(id: 7, name: "John Smith") {
@@ -16,15 +15,18 @@ async def test_mutation_with_flat_response():
                 }
             }
         """
+
+        client = GraphQLClient(endpoint=TEST_ENDPOINT, session=session)
         response = await client.execute(query)
-        expected = {"data": {"createUser": {"id": "7", "name": "John Smith"}}}
-        assert await response.json() == expected
+
+        assert await response.json() == {
+            "data": {"createUser": {"id": "7", "name": "John Smith"}}
+        }
 
 
 @pytest.mark.asyncio
 async def test_mutation_with_nested_fields_in_response():
     async with aiohttp.ClientSession() as session:
-        client = GraphQLClient(endpoint=TEST_ENDPOINT, session=session)
         query = """
             mutation {
                 createTodo(id: 7, title: "TODO", priority: 10, creator: 1) {
@@ -38,8 +40,11 @@ async def test_mutation_with_nested_fields_in_response():
                 }
             }
         """
+
+        client = GraphQLClient(endpoint=TEST_ENDPOINT, session=session)
         response = await client.execute(query)
-        expected = {
+
+        assert await response.json() == {
             "data": {
                 "createTodo": {
                     "id": "7",
@@ -49,4 +54,3 @@ async def test_mutation_with_nested_fields_in_response():
                 }
             }
         }
-        assert await response.json() == expected

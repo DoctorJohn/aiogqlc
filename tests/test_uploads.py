@@ -1,7 +1,7 @@
 import aiohttp
 import pytest
 from aiogqlc import GraphQLClient
-from aiogqlc.tests import TEST_ENDPOINT
+from tests import TEST_ENDPOINT
 
 
 def create_test_file(tmp_path, filename):
@@ -16,7 +16,7 @@ async def test_single_file_upload(tmp_path):
     async with aiohttp.ClientSession() as session:
         filename = "file1.txt"
         test_file = create_test_file(tmp_path, filename)
-        client = GraphQLClient(endpoint=TEST_ENDPOINT, session=session)
+
         query = """
             mutation($file: Upload!) {
                 uploadFile(file: $file) {
@@ -27,8 +27,11 @@ async def test_single_file_upload(tmp_path):
             }
         """
         variables = {"file": test_file.open()}
+
+        client = GraphQLClient(endpoint=TEST_ENDPOINT, session=session)
         response = await client.execute(query, variables=variables)
-        expected = {
+
+        assert await response.json() == {
             "data": {
                 "uploadFile": {
                     "filename": filename,
@@ -37,7 +40,6 @@ async def test_single_file_upload(tmp_path):
                 }
             }
         }
-        assert await response.json() == expected
 
 
 @pytest.mark.asyncio
@@ -45,9 +47,9 @@ async def test_file_list_upload(tmp_path):
     async with aiohttp.ClientSession() as session:
         filename1 = "file1.txt"
         filename2 = "file2.txt"
-        test_file1 = create_test_file(tmp_path, filename1)
-        test_file2 = create_test_file(tmp_path, filename2)
-        client = GraphQLClient(endpoint=TEST_ENDPOINT, session=session)
+        test_file1 = create_test_file(tmp_path, filename1).open()
+        test_file2 = create_test_file(tmp_path, filename2).open()
+
         query = """
             mutation($files: [Upload!]!) {
                 uploadFiles(files: $files) {
@@ -57,9 +59,12 @@ async def test_file_list_upload(tmp_path):
                 }
             }
         """
-        variables = {"files": [test_file1.open(), test_file2.open()]}
+        variables = {"files": [test_file1, test_file2]}
+
+        client = GraphQLClient(endpoint=TEST_ENDPOINT, session=session)
         response = await client.execute(query, variables=variables)
-        expected = {
+
+        assert await response.json() == {
             "data": {
                 "uploadFiles": [
                     {
@@ -75,7 +80,6 @@ async def test_file_list_upload(tmp_path):
                 ]
             }
         }
-        assert await response.json() == expected
 
 
 @pytest.mark.asyncio

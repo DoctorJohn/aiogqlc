@@ -1,13 +1,12 @@
 import aiohttp
 import pytest
 from aiogqlc import GraphQLClient
-from aiogqlc.tests import TEST_ENDPOINT
+from tests import TEST_ENDPOINT
 
 
 @pytest.mark.asyncio
 async def test_query_flat_list():
     async with aiohttp.ClientSession() as session:
-        client = GraphQLClient(endpoint=TEST_ENDPOINT, session=session)
         query = """
             query {
                 todos {
@@ -17,8 +16,11 @@ async def test_query_flat_list():
                 }
             }
         """
+
+        client = GraphQLClient(endpoint=TEST_ENDPOINT, session=session)
         response = await client.execute(query)
-        expected = {
+
+        assert await response.json() == {
             "data": {
                 "todos": [
                     {"id": "1", "title": "Clean kitchen", "priority": 1},
@@ -27,13 +29,11 @@ async def test_query_flat_list():
                 ]
             }
         }
-        assert await response.json() == expected
 
 
 @pytest.mark.asyncio
 async def test_query_list_with_nested_fields():
     async with aiohttp.ClientSession() as session:
-        client = GraphQLClient(endpoint=TEST_ENDPOINT, session=session)
         query = """
             query {
                 todos {
@@ -45,8 +45,11 @@ async def test_query_list_with_nested_fields():
                 }
             }
         """
+
+        client = GraphQLClient(endpoint=TEST_ENDPOINT, session=session)
         response = await client.execute(query)
-        expected = {
+
+        assert await response.json() == {
             "data": {
                 "todos": [
                     {"id": "1", "creator": {"id": "1", "name": "Amelia"}},
@@ -55,13 +58,11 @@ async def test_query_list_with_nested_fields():
                 ]
             }
         }
-        assert await response.json() == expected
 
 
 @pytest.mark.asyncio
 async def test_query_flat_object():
     async with aiohttp.ClientSession() as session:
-        client = GraphQLClient(endpoint=TEST_ENDPOINT, session=session)
         query = """
             query {
                 todo(id: 1) {
@@ -71,17 +72,18 @@ async def test_query_flat_object():
                 }
             }
         """
+
+        client = GraphQLClient(endpoint=TEST_ENDPOINT, session=session)
         response = await client.execute(query)
-        expected = {
+
+        assert await response.json() == {
             "data": {"todo": {"id": "1", "title": "Clean kitchen", "priority": 1}}
         }
-        assert await response.json() == expected
 
 
 @pytest.mark.asyncio
 async def test_query_object_with_nested_fields():
     async with aiohttp.ClientSession() as session:
-        client = GraphQLClient(endpoint=TEST_ENDPOINT, session=session)
         query = """
             query {
                 todo(id: 1) {
@@ -93,8 +95,10 @@ async def test_query_object_with_nested_fields():
                 }
             }
         """
+
+        client = GraphQLClient(endpoint=TEST_ENDPOINT, session=session)
         response = await client.execute(query)
-        expected = {
+
+        assert await response.json() == {
             "data": {"todo": {"id": "1", "creator": {"id": "1", "name": "Amelia"}}}
         }
-        assert await response.json() == expected

@@ -1,7 +1,7 @@
 import aiohttp
 import pytest
 from aiogqlc import GraphQLClient
-from aiogqlc.tests import TEST_ENDPOINT
+from tests import TEST_ENDPOINT
 
 
 @pytest.mark.asyncio
