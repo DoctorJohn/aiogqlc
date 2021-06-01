@@ -11,7 +11,7 @@ lint:
 	flake8 aiogqlc examples setup.py
 
 test:
-	py.test aiogqlc --cov=aiogqlc -vv
+	py.test aiogqlc --cov=aiogqlc --cov-report term-missing -vv
 
 test-with-tox:
 	tox
