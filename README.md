@@ -13,7 +13,7 @@ A Python asynchronous/IO GraphQL client based on `aiohttp` that supports the [Gr
 
 ## Installation
 
-```pip install aiogqlc```
+`pip install aiogqlc`
 
 ## Usage
 
@@ -85,7 +85,7 @@ async def foo():
         print(await response.json())
 ```
 
-### Multiple file upload
+### File list upload
 
 ```python
 import aiohttp
@@ -122,7 +122,7 @@ async def foo():
 
 1. Clone the repo
 2. Create and enter a dedicated virtual environment
-3. Run `make install-dev` to install dev dependencies and a pre-commit hook that automatically formats code.
+3. Run `make dev` to install dev dependencies and a pre-commit hook that automatically formats code.
 
 If you do not have `make` installed, either install it or take a look at the `Makefile` to find out how to run individual commands manually.
 
@@ -132,6 +132,6 @@ If you do not have `make` installed, either install it or take a look at the `Ma
 - Run `make lint` to lint the code.
 
 ### Testing
-- Run `make test` to run all tests in your local environment.
-- Run `make test-with-tox` to run all tests with all supported python versions.
 
+- Run `make test` to run all tests in your local environment.
+- Run `make tox` to run all tests with all supported python versions.
