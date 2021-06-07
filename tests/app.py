@@ -1,3 +1,4 @@
+import asyncio
 import typing
 
 import strawberry
@@ -81,7 +82,29 @@ class Mutation:
         return Todo(id=id, title=title, priority=priority, creator=users[int(creator)])
 
 
-schema = strawberry.Schema(query=Query, mutation=Mutation)
+@strawberry.type
+class Subscription:
+    @strawberry.subscription
+    async def count(
+        self, to: int, interval: float = 0
+    ) -> typing.AsyncGenerator[int, None]:
+        for i in range(to):
+            yield i + 1
+            await asyncio.sleep(interval)
+
+    @strawberry.subscription
+    async def infinity(self, interval: float = 1) -> typing.AsyncGenerator[str, None]:
+        yield "For ever"
+        while True:
+            await asyncio.sleep(interval)
+            yield "and ever..."
+
+    @strawberry.subscription
+    async def todo_added(self) -> typing.AsyncGenerator[Todo, None]:
+        yield todos[0]
+
+
+schema = strawberry.Schema(query=Query, mutation=Mutation, subscription=Subscription)
 
 
 def create_app(**kwargs):
