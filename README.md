@@ -14,7 +14,14 @@
 [tests-image]: https://github.com/DoctorJohn/aiogqlc/workflows/Tests/badge.svg
 [tests-url]: https://github.com/DoctorJohn/aiogqlc/actions
 
-A Python asynchronous/IO GraphQL client based on `aiohttp` that supports the [GraphQL multipart form requests spec](https://github.com/jaydenseric/graphql-multipart-request-spec) for file uploads.
+A Python asynchronous/IO GraphQL client based on [aiohttp][aiohttp-url].
+In addition to standard HTTP POST `queries` and `mutations` this client fully supports
+the [GraphQL multipart form requests spec][multipart-specs-url] for file uploads
+and the [graphql-ws protocol][graphql-ws-url] for WebSocket based `subscriptions`.
+
+[aiohttp-url]: https://github.com/aio-libs/aiohttp
+[multipart-specs-url]: https://github.com/jaydenseric/graphql-multipart-request-spec
+[graphql-ws-url]: https://github.com/apollographql/subscriptions-transport-ws
 
 ## Requirements
 
@@ -150,6 +157,126 @@ async def foo():
         client = GraphQLClient('https://example.com/graphql/', session=session)
         response = await client.execute(query, operation='Operation2')
         print(await response.json())
+```
+
+### Starting a subscription
+
+```python
+import aiohttp
+from aiogqlc import GraphQLClient
+
+
+query = """
+    subscription CommentAdded($article: ID!) {
+        commentAdded(article: $article) {
+            id
+            content
+        }
+    }
+"""
+
+variables = {
+    "article": "42"
+}
+
+
+async def foo():
+    async with aiohttp.ClientSession() as session:
+        client = GraphQLClient('https://example.com/graphql/', session=session)
+
+        async with client.connect() as connection:
+            async for payload in connection.subscribe(query, variables=variables):
+                print(payload)
+```
+
+### Start multiple subscriptions using a single connection
+
+The `graphql-ws` protocol allows us to reuse a single WebSocket connection for multiple
+subscriptions. While the example below shows running two subscriptions sequential,
+running multiple subscriptions over one connection in parallel works as well.
+
+```python
+import aiohttp
+from aiogqlc import GraphQLClient
+
+
+query = """
+    subscription ItemAdded($list: ID!) {
+        itemAdded(list: $list) {
+            id
+            content
+        }
+    }
+"""
+
+
+async def foo():
+    async with aiohttp.ClientSession() as session:
+        client = GraphQLClient('https://example.com/graphql/', session=session)
+
+        async with client.connect() as connection:
+            async for payload in connection.subscribe(query, variables={"list": "1"}):
+                print(payload)
+
+            async for payload in connection.subscribe(query, variables={"list": "2"}):
+                print(payload)
+```
+
+### Selecting a subscription operating
+
+```python
+import aiohttp
+from aiogqlc import GraphQLClient
+
+
+query = """
+    subscription Subscription1 {
+        count(to: 11)
+    }
+    subscription Subscription2 {
+        count(to: 22)
+    }
+"""
+
+
+async def foo():
+    async with aiohttp.ClientSession() as session:
+        client = GraphQLClient('https://example.com/graphql/', session=session)
+
+        async with client.connect() as connection:
+            async for payload in connection.subscribe(query, operation="Subscription2"):
+                print(payload)
+```
+
+### Using connection params
+
+Some servers supporting `graphql-ws` allow clients to specify connection params.
+
+```python
+import aiohttp
+from aiogqlc import GraphQLClient
+
+
+query = """
+    subscription {
+        userCreated
+    }
+"""
+
+
+async def foo():
+    async with aiohttp.ClientSession() as session:
+        client = GraphQLClient('https://example.com/graphql/', session=session)
+        
+        connection_params = {
+            "username": "john",
+            "password": "1234",
+            "keep_alive_interval": 20,
+        }
+
+        async with client.connect(params=connection_params) as connection:
+            async for payload in connection.subscribe(query):
+                print(payload)
 ```
 
 ## Contributing
