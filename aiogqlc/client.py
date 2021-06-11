@@ -31,14 +31,14 @@ class GraphQLWSManager:
         self,
         endpoint: str,
         session: aiohttp.ClientSession,
-        connection_params: dict = None,
+        connection_params: Optional[Dict[str, Any]] = None,
     ) -> None:
         self._endpoint = endpoint
         self._session = session
         self._connection_params = connection_params
         self._last_operation_id = 0
-        self._ws_context: Optional[aiohttp.client._WSRequestContextManager] = None
-        self._ws: Optional[aiohttp.ClientWebSocketResponse] = None
+        self._ws_context: aiohttp.client._WSRequestContextManager
+        self._ws: aiohttp.ClientWebSocketResponse
         self._operations_message_queues: Dict[str, asyncio.Queue] = {}
         self._connection_handler_task: Optional[asyncio.Task] = None
 
@@ -53,12 +53,16 @@ class GraphQLWSManager:
 
     async def __aexit__(self, exc_type, exc_val, exc_tb) -> None:
         await self.terminate_connection()
-        await self._connection_handler_task
+        if self._connection_handler_task:
+            await self._connection_handler_task
         await self._ws_context.__aexit__(exc_type, exc_val, exc_tb)
 
     async def subscribe(
-        self, query: str, variables: dict = None, operation: str = None
-    ) -> AsyncGenerator[dict, None]:
+        self,
+        query: str,
+        variables: Optional[Dict[str, Any]] = None,
+        operation: Optional[str] = None,
+    ) -> AsyncGenerator[Dict[str, Any], None]:
         operation_id = self.get_next_operation_id()
         self._operations_message_queues[operation_id] = asyncio.Queue()
 
@@ -78,7 +82,7 @@ class GraphQLWSManager:
         self._last_operation_id += 1
         return str(self._last_operation_id)
 
-    async def init_connection(self, params: dict) -> None:
+    async def init_connection(self, params: Optional[Dict[str, Any]]) -> None:
         await self._ws.send_json({"type": GQL_CONNECTION_INIT, "payload": params})
         message = await self._ws.receive_json()
 
@@ -93,8 +97,8 @@ class GraphQLWSManager:
         self,
         operation_id: str,
         query: str,
-        variables: dict = None,
-        operation: str = None,
+        variables: Optional[Dict[str, Any]] = None,
+        operation: Optional[str] = None,
     ) -> None:
         payload = serialize_payload(query, variables, operation)
         await self._ws.send_json(
@@ -106,8 +110,7 @@ class GraphQLWSManager:
         )
 
     async def handle_connection(self) -> None:
-        async for message in self._ws:
-            message: aiohttp.WSMessage = message
+        async for message in self._ws:  # type: aiohttp.WSMessage
             if message.type != aiohttp.WSMsgType.TEXT:
                 pass
 
@@ -120,7 +123,9 @@ class GraphQLWSManager:
                 self.yield_operation_message(operation_message)
                 continue
 
-    async def handle_operation(self, operation_id: str) -> AsyncGenerator[dict, None]:
+    async def handle_operation(
+        self, operation_id: str
+    ) -> AsyncGenerator[Dict[str, Any], None]:
         while True:
             operation_message = await self._operations_message_queues[
                 operation_id
@@ -154,32 +159,38 @@ class GraphQLClient:
         self.session = session
 
     def connect(
-        self, protocol: str = GRAPHQL_WS, params: dict = None
+        self, protocol: str = GRAPHQL_WS, params: Optional[Dict[str, Any]] = None
     ) -> GraphQLWSManager:
         if protocol == GRAPHQL_WS:
             return GraphQLWSManager(self.endpoint, self.session, params)
         raise ValueError(protocol)
 
     async def execute(
-        self, query: str, variables: dict = None, operation: str = None
+        self,
+        query: str,
+        variables: Optional[Dict[str, Any]] = None,
+        operation: Optional[str] = None,
     ) -> aiohttp.ClientResponse:
         nulled_variables, files_to_paths_mapping = self.prepare(variables)
+        data_param: Dict[str, Any]
 
         if files_to_paths_mapping:
-            data = self.prepare_multipart(
+            form_data = self.prepare_multipart(
                 query, nulled_variables, files_to_paths_mapping, operation
             )
-            data_param = {"data": data}
+            data_param = {"data": form_data}
         else:
-            data = serialize_payload(query, variables, operation)
-            data_param = {"json": data}
+            json_data = serialize_payload(query, variables, operation)
+            data_param = {"json": json_data}
 
         async with self.session.post(self.endpoint, **data_param) as response:
             await response.read()
             return response
 
     @classmethod
-    def prepare(cls, variables: dict) -> Tuple[dict, Dict[IOBase, List[str]]]:
+    def prepare(
+        cls, variables: Optional[Dict[str, Any]]
+    ) -> Tuple[dict, Dict[IOBase, List[str]]]:
         files_to_paths_mapping: Dict[IOBase, List[str]] = {}
 
         def separate_files(path: str, obj: object) -> Any:
@@ -214,9 +225,9 @@ class GraphQLClient:
     def prepare_multipart(
         cls,
         query: str,
-        variables: dict,
+        variables: Dict[str, Any],
         files_to_paths_mapping: Dict[IOBase, List[str]],
-        operation: str = None,
+        operation: Optional[str] = None,
     ) -> aiohttp.FormData:
         form_data = aiohttp.FormData()
         operations = serialize_payload(query, variables, operation)
