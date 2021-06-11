@@ -13,6 +13,7 @@ lint:
 	flake8 aiogqlc examples tests setup.py
 	isort aiogqlc examples tests setup.py --check-only
 	black aiogqlc examples tests setup.py --check
+	mypy aiogqlc
 
 .PHONY: test
 test:
