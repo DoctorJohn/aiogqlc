@@ -3,18 +3,22 @@ import asyncio
 import aiohttp
 from aiogqlc import GraphQLClient
 
-query = """
-    query {
-        allFilms {
-            title
-        }
-    }
-"""
+ENDPOINT = "https://swapi-graphql.netlify.app/.netlify/functions/index"
 
 
 async def main():
+    query = """
+        query {
+            allFilms {
+                films {
+                    title
+                }
+            }
+        }
+    """
+
     async with aiohttp.ClientSession() as session:
-        client = GraphQLClient("https://swapi.graph.cool", session=session)
+        client = GraphQLClient(ENDPOINT, session=session)
         response = await client.execute(query)
         print(await response.json())
 
