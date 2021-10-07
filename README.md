@@ -25,7 +25,7 @@ and the [graphql-ws protocol][graphql-ws-url] for WebSocket based `subscriptions
 
 ## Requirements
 
-- Python (>=3.6)
+- Python (>=3.7)
 - [aiohttp](https://pypi.org/project/aiohttp/) (>=3.6.0)
 
 ## Installation
