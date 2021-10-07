@@ -7,6 +7,7 @@ from aiogqlc.errors import (
     GraphQLWSProtocolError,
 )
 from aiohttp import web
+from strawberry.aiohttp.handlers.graphql_ws_handler import GraphQLWSHandler
 from strawberry.aiohttp.views import GraphQLView
 from tests.app import create_app, schema
 
@@ -289,13 +290,14 @@ async def test_reusing_a_connection_after_cancelling_a_subscription(graphql_sess
 
 
 async def test_server_connection_rejection(aiohttp_client):
-    class ConnectionRejectingGraphQLView(GraphQLView):
-        async def handle_connection_init(
-            self, request: web.Request, ws: web.WebSocketResponse
-        ) -> None:
-            await ws.send_json(
+    class ConnectingRejectingHandler(GraphQLWSHandler):
+        async def handle_connection_init(self, message) -> None:
+            await self.send_json(
                 {"type": GQL_CONNECTION_ERROR, "payload": {"message": "TEST"}}
             )
+
+    class ConnectionRejectingGraphQLView(GraphQLView):
+        graphql_ws_handler_class = ConnectingRejectingHandler
 
     app = web.Application()
     app.router.add_route("*", "/graphql", ConnectionRejectingGraphQLView(schema=schema))
@@ -312,11 +314,12 @@ async def test_server_connection_rejection(aiohttp_client):
 
 
 async def test_server_connection_protocol_violation(aiohttp_client):
+    class ProtocolViolatingHandler(GraphQLWSHandler):
+        async def handle_connection_init(self, message) -> None:
+            await self.send_json({"type": GQL_DATA, "payload": {"data": "TEST"}})
+
     class ProtocolViolatingGraphQLView(GraphQLView):
-        async def handle_connection_init(
-            self, request: web.Request, ws: web.WebSocketResponse
-        ) -> None:
-            await ws.send_json({"type": GQL_DATA, "payload": {"data": "TEST"}})
+        graphql_ws_handler_class = ProtocolViolatingHandler
 
     app = web.Application()
     app.router.add_route("*", "/graphql", ProtocolViolatingGraphQLView(schema=schema))
