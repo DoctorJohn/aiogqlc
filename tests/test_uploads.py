@@ -14,9 +14,9 @@ async def test_single_file_upload(graphql_session):
     variables = {"file": file1}
 
     client = GraphQLClient(endpoint="/graphql", session=graphql_session)
-    response = await client.execute(query, variables=variables)
 
-    assert await response.json() == {"data": {"readFile": "Hello, World!"}}
+    async with client.execute(query, variables=variables) as response:
+        assert await response.json() == {"data": {"readFile": "Hello, World!"}}
 
 
 async def test_file_list_upload(graphql_session):
@@ -31,16 +31,16 @@ async def test_file_list_upload(graphql_session):
     variables = {"files": [file1, file2]}
 
     client = GraphQLClient(endpoint="/graphql", session=graphql_session)
-    response = await client.execute(query, variables=variables)
 
-    assert await response.json() == {
-        "data": {
-            "readFiles": [
-                "Hello, Foo!",
-                "Hello, Bar!",
-            ]
+    async with client.execute(query, variables=variables) as response:
+        assert await response.json() == {
+            "data": {
+                "readFiles": [
+                    "Hello, Foo!",
+                    "Hello, Bar!",
+                ]
+            }
         }
-    }
 
 
 async def test_using_in_single_file_under_multiple_paths(graphql_session, tmp_path):
@@ -54,13 +54,13 @@ async def test_using_in_single_file_under_multiple_paths(graphql_session, tmp_pa
     variables = {"files": [file1, file1]}
 
     client = GraphQLClient(endpoint="/graphql", session=graphql_session)
-    response = await client.execute(query, variables=variables)
 
-    assert await response.json() == {
-        "data": {
-            "readFiles": [
-                "Hello, World!",
-                "Hello, World!",
-            ]
+    async with client.execute(query, variables=variables) as response:
+        assert await response.json() == {
+            "data": {
+                "readFiles": [
+                    "Hello, World!",
+                    "Hello, World!",
+                ]
+            }
         }
-    }

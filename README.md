@@ -56,8 +56,9 @@ query = """
 async def main():
     async with aiohttp.ClientSession() as session:
         client = GraphQLClient(ENDPOINT, session=session)
-        response = await client.execute(query)
-        print(await response.json())
+
+        async with client.execute(query) as response:
+            print(await response.json())
 
 
 if __name__ == "__main__":
@@ -103,8 +104,9 @@ variables = {
 async def foo():
     async with aiohttp.ClientSession() as session:
         client = GraphQLClient('https://example.com/graphql/', session=session)
-        response = await client.execute(query, variables=variables)
-        print(await response.json())
+        
+        async with client.execute(query, variables=variables) as response:
+            print(await response.json())
 ```
 
 ### File list upload
@@ -134,8 +136,9 @@ variables = {
 async def foo():
     async with aiohttp.ClientSession() as session:
         client = GraphQLClient('https://example.com/graphql/', session=session)
-        response = await client.execute(query, variables=variables)
-        print(await response.json())
+        
+        async with client.execute(query, variables=variables) as response:
+            print(await response.json())
 ```
 
 ### Selecting an operation
@@ -160,8 +163,9 @@ query = '''
 async def foo():
     async with aiohttp.ClientSession() as session:
         client = GraphQLClient('https://example.com/graphql/', session=session)
-        response = await client.execute(query, operation='Operation2')
-        print(await response.json())
+        
+        async with client.execute(query, operation='Operation2') as response:
+            print(await response.json())
 ```
 
 ### Starting a subscription
