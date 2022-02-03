@@ -27,19 +27,22 @@ jobs:
       run: |
         coverage run --branch --source=aiogqlc -m pytest --cov=aiogqlc tests
         coverage report -m
-    - name: Coveralls
-      uses: AndreMiras/coveralls-python-action@develop
-      with:
-        github-token: ${{ secrets.github_token }}
-        parallel: true
-        flag-name: "Tests"
+    - name: Upload coverage data to coveralls.io
+      run: coveralls --service=github
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        COVERALLS_FLAG_NAME: ${{ matrix.test-name }}
+        COVERALLS_PARALLEL: true
 
-  finish:
+  coveralls:
+    name: Indicate completion to coveralls.io
     needs: test
     runs-on: ubuntu-latest
+    container: python:3-slim
     steps:
-      - name: Coveralls Finished
-        uses: AndreMiras/coveralls-python-action@develop
-        with:
-          github-token: ${{ secrets.github_token }}
-          parallel-finished: true
+    - name: Finished
+      run: |
+        pip3 install --upgrade coveralls
+        coveralls --service=github --finish
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
