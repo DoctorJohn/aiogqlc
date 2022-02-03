@@ -4,6 +4,7 @@
 [![Downloads][downloads-image]][downloads-url]
 [![License][license-image]][license-url]
 [![Tests][tests-image]][tests-url]
+[![codecov][codecov-image]][codecov-url]
 
 [pypi-image]: https://img.shields.io/pypi/v/aiogqlc
 [pypi-url]: https://pypi.org/project/aiogqlc/
@@ -13,6 +14,8 @@
 [license-url]: https://github.com/DoctorJohn/aiogqlc/blob/master/LICENSE
 [tests-image]: https://github.com/DoctorJohn/aiogqlc/workflows/Tests/badge.svg
 [tests-url]: https://github.com/DoctorJohn/aiogqlc/actions
+[codecov-image]: https://codecov.io/gh/DoctorJohn/aiogqlc/branch/main/graph/badge.svg?token=63WRUHG8SW
+[codecov-url]: https://codecov.io/gh/DoctorJohn/aiogqlc
 
 A Python asynchronous/IO GraphQL client based on [aiohttp][aiohttp-url].
 In addition to standard HTTP POST `queries` and `mutations` this client fully supports
