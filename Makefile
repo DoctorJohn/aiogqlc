@@ -17,7 +17,7 @@ lint:
 
 .PHONY: test
 test:
-	py.test aiogqlc --cov=aiogqlc --cov-report term-missing -vv tests
+	pytest --cov=aiogqlc --cov-report=term-missing --cov-branch -vv tests
 
 .PHONY: tox
 tox:
