@@ -351,3 +351,21 @@ async def test_keep_alive_message_handling(aiohttp_client):
             data.append(payload["data"]["count"])
 
     assert data == [1, 2, 3]
+
+
+async def test_client_ignores_non_text_messages(graphql_session):
+    query = """
+        subscription {
+            binaryMessage
+        }
+    """
+
+    client = GraphQLClient(endpoint="/graphql", session=graphql_session)
+
+    data = []
+
+    async with client.connect() as connection:
+        async for payload in connection.subscribe(query):
+            data.append(payload["data"]["binaryMessage"])
+
+    assert data == [1, 2]

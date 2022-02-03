@@ -3,6 +3,7 @@ import typing
 
 import strawberry
 from aiohttp import web
+from strawberry.aiohttp.handlers import GraphQLWSHandler
 from strawberry.aiohttp.views import GraphQLView
 from strawberry.file_uploads import Upload
 
@@ -103,11 +104,30 @@ class Subscription:
     async def todo_added(self) -> typing.AsyncGenerator[Todo, None]:
         yield todos[0]
 
+    @strawberry.subscription
+    async def binary_message(self, info) -> typing.AsyncGenerator[int, None]:
+        ws = info.context["ws"]
+        yield 1
+        await ws.send_bytes(b"\n\0")
+        yield 2
+
 
 schema = strawberry.Schema(query=Query, mutation=Mutation, subscription=Subscription)
 
 
+class CustomGraphQLWSHandler(GraphQLWSHandler):
+    async def get_context(self):
+        context = await super().get_context()
+        context["ws"] = self._ws
+        return context
+
+
+class CustomGraphQLView(GraphQLView):
+    graphql_ws_handler_class = CustomGraphQLWSHandler
+
+
 def create_app(**kwargs):
+    view = CustomGraphQLView(schema=schema, **kwargs)
     app = web.Application()
-    app.router.add_route("*", "/graphql", GraphQLView(schema=schema, **kwargs))
+    app.router.add_route("*", "/graphql", view)
     return app
