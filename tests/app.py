@@ -112,10 +112,18 @@ class Subscription:
         yield 2
 
     @strawberry.subscription
-    async def invalid_message(self, info) -> typing.AsyncGenerator[int, None]:
+    async def message_without_id(self, info) -> typing.AsyncGenerator[int, None]:
         ws = info.context["ws"]
         yield 1
-        await ws.send_json({"notFollowingSpecs": True})
+        await ws.send_json({"type": "message-without-id"})
+        yield 2
+
+    @strawberry.subscription
+    async def message_with_invalid_type(self, info) -> typing.AsyncGenerator[int, None]:
+        handler = info.context["handler"]
+        operation_id = list(handler.tasks.keys())[0]
+        yield 1
+        await handler.send_message("invalid-type", operation_id)
         yield 2
 
 
@@ -126,6 +134,7 @@ class CustomGraphQLWSHandler(GraphQLWSHandler):
     async def get_context(self):
         context = await super().get_context()
         context["ws"] = self._ws
+        context["handler"] = self
         return context
 
 
