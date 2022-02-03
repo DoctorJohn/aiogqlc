@@ -371,10 +371,10 @@ async def test_client_ignores_non_text_messages(graphql_session):
     assert data == [1, 2]
 
 
-async def test_client_ignores_invalid_messages(graphql_session):
+async def test_client_ignores_messages_without_id(graphql_session):
     query = """
         subscription {
-            invalidMessage
+            messageWithoutId
         }
     """
 
@@ -384,6 +384,24 @@ async def test_client_ignores_invalid_messages(graphql_session):
 
     async with client.connect() as connection:
         async for payload in connection.subscribe(query):
-            data.append(payload["data"]["invalidMessage"])
+            data.append(payload["data"]["messageWithoutId"])
+
+    assert data == [1, 2]
+
+
+async def test_client_ignores_messages_with_invalid_type(graphql_session):
+    query = """
+        subscription {
+            messageWithInvalidType
+        }
+    """
+
+    client = GraphQLClient(endpoint="/graphql", session=graphql_session)
+
+    data = []
+
+    async with client.connect() as connection:
+        async for payload in connection.subscribe(query):
+            data.append(payload["data"]["messageWithInvalidType"])
 
     assert data == [1, 2]
