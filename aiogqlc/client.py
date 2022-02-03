@@ -40,7 +40,7 @@ class GraphQLWSManager:
         self._ws_context: aiohttp.client._WSRequestContextManager
         self._ws: aiohttp.ClientWebSocketResponse
         self._operations_message_queues: Dict[str, asyncio.Queue] = {}
-        self._connection_handler_task: Optional[asyncio.Task] = None
+        self._connection_handler_task: asyncio.Task
 
     async def __aenter__(self) -> "GraphQLWSManager":
         self._ws_context = self._session.ws_connect(
@@ -53,8 +53,7 @@ class GraphQLWSManager:
 
     async def __aexit__(self, exc_type, exc_val, exc_tb) -> None:
         await self.terminate_connection()
-        if self._connection_handler_task:
-            await self._connection_handler_task
+        await self._connection_handler_task
         await self._ws_context.__aexit__(exc_type, exc_val, exc_tb)
 
     async def subscribe(
