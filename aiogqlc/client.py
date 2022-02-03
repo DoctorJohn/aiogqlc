@@ -139,7 +139,7 @@ class GraphQLWSManager:
                 raise GraphQLWSOperationError(payload)
 
             if operation_message["type"] == GQL_COMPLETE:
-                break
+                return
 
     def yield_operation_message(self, operation_message: dict) -> None:
         operation_id = operation_message["id"]
