@@ -25,7 +25,7 @@ jobs:
         pip install -e .[dev]
     - name: Run test suite
       run: |
-        coverage run --branch --source=aiogqlc -m pytest tests
+        coverage run --branch --source=aiogqlc -m pytest --cov=aiogqlc tests
         coverage report -m
     - name: Coveralls
       uses: AndreMiras/coveralls-python-action@develop
