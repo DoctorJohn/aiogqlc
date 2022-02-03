@@ -115,7 +115,7 @@ class GraphQLWSManager:
 
             operation_message = message.json()
 
-            if operation_message["type"] == GQL_CONNECTION_KEEP_ALIVE:
+            if operation_message.get("type") == GQL_CONNECTION_KEEP_ALIVE:
                 continue
 
             if "id" in operation_message:
