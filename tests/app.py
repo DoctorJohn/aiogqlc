@@ -111,6 +111,13 @@ class Subscription:
         await ws.send_bytes(b"\n\0")
         yield 2
 
+    @strawberry.subscription
+    async def invalid_message(self, info) -> typing.AsyncGenerator[int, None]:
+        ws = info.context["ws"]
+        yield 1
+        await ws.send_json({"notFollowingSpecs": True})
+        yield 2
+
 
 schema = strawberry.Schema(query=Query, mutation=Mutation, subscription=Subscription)
 
