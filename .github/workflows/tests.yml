@@ -18,11 +18,11 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install tox-gh tox-gh-actions
-    - name: Test with tox
-      run: tox4
-      env:
-        TOXENV: ${{ matrix.toxenv }}
+        pip install tox-gh
+    - name: Setup test suite
+      run: tox4 r -vv --notest
+    - name: Run test suite
+      run: tox4 r --skip-pkg-install
     - name: Coveralls
       uses: AndreMiras/coveralls-python-action@develop
       with:
