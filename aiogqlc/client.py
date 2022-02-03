@@ -111,7 +111,7 @@ class GraphQLWSManager:
     async def handle_connection(self) -> None:
         async for message in self._ws:  # type: aiohttp.WSMessage
             if message.type != aiohttp.WSMsgType.TEXT:
-                pass
+                continue
 
             operation_message = message.json()
 
