@@ -1,4 +1,4 @@
-name: Doc 
+name: Docs
 
 on:
   push:
