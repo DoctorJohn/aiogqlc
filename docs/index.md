@@ -19,14 +19,14 @@
 
 A simple asynchronous Python GraphQL client based on [asyncio][asyncio-url] and [aiohttp][aiohttp-url].
 
-[Get started](getting-started.md)
+**[Get started](getting-started.md)**
 
 ## Features
 
-- It's just a slim wrapper around [aiohttp][aiohttp-url] client sessions
-- Support for **queries** and **mutations** compatible with the [GraphQL over HTTP specs][http-specs-url]
-- Support for **file uploads** following [GraphQL multipart form requests specs][multipart-specs-url]
-- Support for **subscriptions** following the [graphql-ws protocol specs][graphql-ws-specs-url]
+- It's just a lightweight wrapper around [aiohttp][aiohttp-url] client sessions
+- Support for **queries** and **mutations** compatible with the [GraphQL over HTTP spec][http-specs-url]
+- Support for **file uploads** following the [GraphQL multipart form requests spec][multipart-specs-url]
+- Support for **subscriptions** following the [graphql-ws protocol spec][graphql-ws-specs-url]
 - Fully type annotated code base
 - Full test coverage
 

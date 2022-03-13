@@ -33,7 +33,7 @@ nav:
     - Mutations: mutations.md
     - File Uploads: file-uploads.md
     - Subscriptions: subscriptions.md
-    - Authorization: authorization.md
+    - Authentication: authentication.md
   - Guides:
     - Contributing: contributing.md
     - Migrating: migrating.md

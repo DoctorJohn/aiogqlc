@@ -17,3 +17,7 @@ If you don't have make installed, take a look at the `Makefile` and run it's com
 
 - Run `pytest tests` to run all tests in your local environment.
 - Run `tox` to run all tests against all supported Python versions.
+
+## Documentation
+
+Preview the documentation website locally by running `mkdocs serve`.
