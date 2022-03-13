@@ -27,9 +27,15 @@ and the [graphql-ws subprotocol][graphql-ws-url] for WebSocket based `subscripti
 
 ## Installation
 
-`pip install aiogqlc`
+```sh
+pip install aiogqlc
+```
 
 ## Basic usage
+
+Check the [documentation][docs-url] for detailed and more advanced usage examples.
+
+### Queries
 
 ```python
 import asyncio
@@ -60,9 +66,88 @@ if __name__ == "__main__":
     asyncio.run(main())
 ```
 
-## Documentation
+### Mutations
 
-[Read the documentation][docs-url] to learn more about queries, mutations, subscriptions, file uploads and even authorization.
+```python
+import aiohttp
+from aiogqlc import GraphQLClient
+
+document = """
+    mutation ($userId: ID!) {
+        deleteUser (id: $userId) {
+            id
+        }
+    }
+"""
+
+variables = {
+    "userId": "42",
+}
+
+
+async def main():
+    async with aiohttp.ClientSession() as session:
+        client = GraphQLClient("https://example.com/graphql/", session=session)
+        response = await client.execute(document, variables=variables)
+        print(await response.json())
+```
+
+### File uploads
+
+```python
+import aiohttp
+from aiogqlc import GraphQLClient
+
+document = """
+    mutation($file: Upload!) {
+        uploadFile(file: $file) {
+            size
+        }
+    }
+"""
+
+variables = {
+    "file": open("test.txt", "rb")
+}
+
+
+async def foo():
+    async with aiohttp.ClientSession() as session:
+        client = GraphQLClient("https://example.com/graphql/", session=session)
+        response = await client.execute(document, variables=variables)
+        print(await response.json())
+
+```
+
+### Subscriptions
+
+```python
+import aiohttp
+from aiogqlc import GraphQLClient
+
+document = """
+    subscription($postId: ID!) {
+        likeAdded(postId: $postId)
+    }
+"""
+
+variables = {
+    "postId": "42"
+}
+
+
+async def main():
+    async with aiohttp.ClientSession() as session:
+        client = GraphQLClient("https://example.com/graphql/", session=session)
+
+        async with client.connect() as connection:
+            async for payload in connection.subscribe(document, variables=variables):
+                print(payload)
+```
+
+## [Documentation][docs-url]
+
+[Read the documentation][docs-url] to learn more about queries, mutations, subscriptions, file uploads and even authentication.
 
 [aiohttp-url]: https://github.com/aio-libs/aiohttp
 [multipart-specs-url]: https://github.com/jaydenseric/graphql-multipart-request-spec

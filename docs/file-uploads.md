@@ -1,14 +1,12 @@
 # File uploads
 
 File uploads are not part of the official GraphQL spec (yet).
-Fortunately, there is the widely supported [GraphQL multipart request spec][multipart-specs-url].
-AIOGQLC supports said specification.
+To fill the gap AIOGQLC supports the widely adopted
+[GraphQL multipart request specification][multipart-specs-url].
 
 File upload variables work just like other variables.
-Just remember to open file in a **readable** `mode`.
+Just remember to **open files in a readable `mode`**.
 Otherwise they can't be read and uploaded.
-
-[multipart-specs-url]: https://github.com/jaydenseric/graphql-multipart-request-spec
 
 ## Upload a single file
 
@@ -67,7 +65,7 @@ async def foo():
 
 ## Prevent unnecessary uploads
 
-A file referenced multiple times and will only be uploaded once.
+A file can be referenced multiple times but will only be uploaded once.
 
 ```python
 import aiohttp
@@ -99,3 +97,5 @@ async def foo():
         response = await client.execute(document, variables=variables)
         print(await response.json())
 ```
+
+[multipart-specs-url]: https://github.com/jaydenseric/graphql-multipart-request-spec

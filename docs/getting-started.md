@@ -4,9 +4,13 @@
 
 Run the following [pip](https://pip.pypa.io/en/stable/getting-started/) command in a terminal:
 
-`pip install aiogqlc`
+```sh
+pip install aiogqlc
+```
 
 ## Try it out
+
+The following code should run without modifications, try it out!
 
 ```python
 import asyncio
@@ -38,5 +42,5 @@ if __name__ == "__main__":
 
 ## Learn more
 
-Take a look at the navigation too learn more about
+Take a look at the navigation to learn more about
 [queries](queries.md), [mutations](mutations.md), [subscriptions](subscriptions.md) and other operations.
