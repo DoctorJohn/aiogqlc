@@ -6,6 +6,7 @@ from aiohttp import web
 from strawberry.aiohttp.handlers import GraphQLWSHandler
 from strawberry.aiohttp.views import GraphQLView
 from strawberry.file_uploads import Upload
+from strawberry.types import Info
 
 
 @strawberry.type
@@ -105,21 +106,23 @@ class Subscription:
         yield todos[0]
 
     @strawberry.subscription
-    async def binary_message(self, info) -> typing.AsyncGenerator[int, None]:
+    async def binary_message(self, info: Info) -> typing.AsyncGenerator[int, None]:
         ws = info.context["ws"]
         yield 1
         await ws.send_bytes(b"\n\0")
         yield 2
 
     @strawberry.subscription
-    async def message_without_id(self, info) -> typing.AsyncGenerator[int, None]:
+    async def message_without_id(self, info: Info) -> typing.AsyncGenerator[int, None]:
         ws = info.context["ws"]
         yield 1
         await ws.send_json({"type": "message-without-id"})
         yield 2
 
     @strawberry.subscription
-    async def message_with_invalid_type(self, info) -> typing.AsyncGenerator[int, None]:
+    async def message_with_invalid_type(
+        self, info: Info
+    ) -> typing.AsyncGenerator[int, None]:
         handler = info.context["handler"]
         operation_id = list(handler.tasks.keys())[0]
         yield 1
