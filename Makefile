@@ -5,14 +5,14 @@ dev:
 
 .PHONY: format
 format:
-	isort aiogqlc examples tests setup.py
-	black aiogqlc examples tests setup.py
+	isort aiogqlc tests setup.py
+	black aiogqlc tests setup.py
 
 .PHONY: lint
 lint:
-	flake8 aiogqlc examples tests setup.py
-	isort aiogqlc examples tests setup.py --check-only
-	black aiogqlc examples tests setup.py --check
+	flake8 aiogqlc tests setup.py
+	isort aiogqlc tests setup.py --check-only
+	black aiogqlc tests setup.py --check
 	mypy aiogqlc
 
 .PHONY: test
