@@ -5,13 +5,12 @@ dev:
 
 .PHONY: format
 format:
-	poetry run isort aiogqlc tests
+	poetry run ruff aiogqlc tests --fix
 	poetry run black aiogqlc tests
 
 .PHONY: lint
 lint:
-	poetry run flake8 aiogqlc tests
-	poetry run isort aiogqlc tests --check-only
+	poetry run ruff aiogqlc tests
 	poetry run black aiogqlc tests --check
 	poetry run mypy aiogqlc
 
