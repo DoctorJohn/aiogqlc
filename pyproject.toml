@@ -3,7 +3,7 @@ name = "aiogqlc"
 version = "4.0.0"
 description = "aiohttp based GraphQL client"
 authors = ["Jonathan Ehwald <github@ehwald.info>"]
-license = "MIT License"
+license = "MIT"
 readme = "README.md"
 packages = [{include = "aiogqlc"}]
 homepage = "https://github.com/DoctorJohn/aiogqlc"
