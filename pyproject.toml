@@ -37,7 +37,6 @@ pytest-asyncio = "^0.21.1"
 pytest-aiohttp = "^1.0.4"
 strawberry-graphql = "^0.205.0"
 mypy = "^1.5.1"
-codecov = "2.1.13"
 mkdocs = "^1.5.2"
 mkdocs-material = "^9.2.8"
 ruff = "^0.0.287"
@@ -45,6 +44,3 @@ ruff = "^0.0.287"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
-
-[tool.coverage.run]
-omit = "*/tests/*"
