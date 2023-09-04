@@ -17,7 +17,3 @@ lint:
 .PHONY: test
 test:
 	poetry run pytest --cov=aiogqlc --cov-report=term-missing --cov-branch -vv tests
-
-.PHONY: tox
-tox:
-	poetry run tox
