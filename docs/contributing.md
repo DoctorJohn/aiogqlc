@@ -19,4 +19,4 @@ Run `make test` to run all tests in your local environment.
 
 ## Documentation
 
-Preview the documentation website locally by running `mkdocs serve`.
+Preview the documentation website locally by running `poetry run mkdocs serve`.

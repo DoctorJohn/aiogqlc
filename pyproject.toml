@@ -38,8 +38,8 @@ pytest-aiohttp = "^1.0.4"
 strawberry-graphql = "0.95.1"
 mypy = "0.971"
 codecov = "2.1.13"
-mkdocs = "1.2.4"
-mkdocs-material = "8.1.11"
+mkdocs = "^1.5.2"
+mkdocs-material = "^9.2.8"
 ruff = "^0.0.287"
 
 [build-system]
