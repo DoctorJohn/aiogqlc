@@ -1,29 +1,24 @@
 .PHONY: dev
 dev:
-	pip install -e ".[dev]"
-	pre-commit install
+	poetry install
+	poetry run pre-commit install
 
 .PHONY: format
 format:
-	isort aiogqlc tests setup.py
-	black aiogqlc tests setup.py
+	poetry run isort aiogqlc tests
+	poetry run black aiogqlc tests
 
 .PHONY: lint
 lint:
-	flake8 aiogqlc tests setup.py
-	isort aiogqlc tests setup.py --check-only
-	black aiogqlc tests setup.py --check
-	mypy aiogqlc
+	poetry run flake8 aiogqlc tests
+	poetry run isort aiogqlc tests --check-only
+	poetry run black aiogqlc tests --check
+	poetry run mypy aiogqlc
 
 .PHONY: test
 test:
-	pytest --cov=aiogqlc --cov-report=term-missing --cov-branch -vv tests
+	poetry run pytest --cov=aiogqlc --cov-report=term-missing --cov-branch -vv tests
 
 .PHONY: tox
 tox:
-	tox
-
-.PHONY: release
-release:
-	python3 setup.py sdist bdist_wheel
-	twine upload dist/*
+	poetry run tox

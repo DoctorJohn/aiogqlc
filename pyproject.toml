@@ -1,0 +1,58 @@
+[tool.poetry]
+name = "aiogqlc"
+version = "3.1.0"
+description = "aiohttp based GraphQL client"
+authors = ["Jonathan Ehwald <github@ehwald.info>"]
+license = "MIT License"
+readme = "README.md"
+packages = [{include = "aiogqlc"}]
+homepage = "https://github.com/DoctorJohn/aiogqlc"
+repository = "https://github.com/DoctorJohn/aiogqlc"
+documentation = "https://github.com/DoctorJohn/aiogqlc"
+classifiers = [
+    "Environment :: Web Environment",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Topic :: Internet :: WWW/HTTP",
+    "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
+]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+aiohttp = "^3.6.0"
+
+[tool.poetry.group.dev.dependencies]
+flake8 = "5.0.0"
+isort = "5.10.1"
+black = "22.6.0"
+pre-commit = "2.20.0"
+pytest = "7.1.2"
+pytest-cov = "3.0.0"
+pytest-asyncio = "0.19.0"
+pytest-aiohttp = "1.0.4"
+tox = "3.25.1"
+twine = "4.0.1"
+strawberry-graphql = "0.95.1"
+mypy = "0.971"
+codecov = "2.1.13"
+mkdocs = "1.2.4"
+mkdocs-material = "8.1.11"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.isort]
+profile = "black"
+src_paths = ["aiogqlc"]
+known_first_party = ["aiogqlc"]
+
+[tool.coverage.run]
+omit = "*/tests/*"
