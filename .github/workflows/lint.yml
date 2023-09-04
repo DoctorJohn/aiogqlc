@@ -35,3 +35,4 @@ jobs:
       run: |
         poetry run ruff aiogqlc tests
         poetry run black aiogqlc tests --check
+        poetry run mypy aiogqlc
