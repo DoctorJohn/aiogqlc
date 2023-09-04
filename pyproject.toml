@@ -44,3 +44,7 @@ ruff = "^0.0.287"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.mypy]
+plugins = "strawberry.ext.mypy_plugin"
+implicit_reexport = false
