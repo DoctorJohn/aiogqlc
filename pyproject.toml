@@ -48,3 +48,6 @@ build-backend = "poetry.core.masonry.api"
 [tool.mypy]
 plugins = "strawberry.ext.mypy_plugin"
 implicit_reexport = false
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
