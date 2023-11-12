@@ -169,6 +169,7 @@ class GraphQLClient:
         query: str,
         variables: Optional[Dict[str, Any]] = None,
         operation: Optional[str] = None,
+        **kwargs,
     ) -> aiohttp.ClientResponse:
         nulled_variables, files_to_paths_mapping = self.prepare(variables)
         data_param: Dict[str, Any]
@@ -182,7 +183,7 @@ class GraphQLClient:
             json_data = serialize_payload(query, variables, operation)
             data_param = {"json": json_data}
 
-        async with self.session.post(self.endpoint, **data_param) as response:
+        async with self.session.post(self.endpoint, **kwargs, **data_param) as response:
             await response.read()
             return response
 

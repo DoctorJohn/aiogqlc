@@ -1,5 +1,5 @@
 site_name: AIOGQLC
-site_description: LUL
+site_description: "Python aynchronous/IO GraphQL client with file upload and subscription support."
 site_url: https://doctorjohn.github.io/aiogqlc/
 repo_url: https://github.com/DoctorJohn/aiogqlc/
 
@@ -20,20 +20,20 @@ markdown_extensions:
       use_pygments: true
       anchor_linenums: true
   - pymdownx.tabbed:
-      alternate_style: true 
+      alternate_style: true
   - pymdownx.superfences
   - pymdownx.details
-
 
 nav:
   - Overview: index.md
   - Getting started: getting-started.md
   - Operations:
-    - Queries: queries.md
-    - Mutations: mutations.md
-    - File Uploads: file-uploads.md
-    - Subscriptions: subscriptions.md
-    - Authentication: authentication.md
+      - Queries: queries.md
+      - Mutations: mutations.md
+      - File Uploads: file-uploads.md
+      - Subscriptions: subscriptions.md
+      - Authentication: authentication.md
+      - Advanced Usage: advanced-usage.md
   - Guides:
-    - Contributing: contributing.md
-    - Migrating: migrating.md
+      - Contributing: contributing.md
+      - Migrating: migrating.md

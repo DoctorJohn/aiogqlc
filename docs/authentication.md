@@ -7,6 +7,8 @@ Take a look at the [aiohttp documentation][aiohttp-headers-url] to learn more.
 
 [aiohttp-headers-url]: https://docs.aiohttp.org/en/stable/client_advanced.html#custom-request-headers
 
+The following example shows how to set a default `Authorization` header for the whole session.
+
 ```python
 import aiohttp
 from aiogqlc import GraphQLClient
@@ -18,6 +20,22 @@ headers = {
 async def foo():
     async with aiohttp.ClientSession(headers=headers) as session:
         client = GraphQLClient("https://example.com/graphql/", session=session)
+```
+
+Instead of setting a default header for the whole session, you can also set a header for a single request.
+
+```python
+import aiohttp
+from aiogqlc import GraphQLClient
+
+headers = {
+    "Authorization": "Token <your-token-here>"
+}
+
+async def foo():
+    async with aiohttp.ClientSession() as session:
+        client = GraphQLClient("https://example.com/graphql/", session=session)
+        response = await client.execute("query { someField }", headers=headers)
 ```
 
 ## Authenticate `graphql-ws` connections
@@ -39,7 +57,7 @@ from aiogqlc import GraphQLClient
 async def foo():
     async with aiohttp.ClientSession() as session:
         client = GraphQLClient("https://example.com/graphql/", session=session)
-        
+
         connection_params = {
             "username": "john",
             "password": "1234",
