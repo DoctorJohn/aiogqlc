@@ -33,6 +33,6 @@ jobs:
         run: poetry install --no-interaction
       - name: Lint
         run: |
-          poetry run ruff aiogqlc tests
-          poetry run black aiogqlc tests --check
+          poetry run ruff check aiogqlc tests
+          poetry run ruff format --check aiogqlc tests
           poetry run mypy aiogqlc
