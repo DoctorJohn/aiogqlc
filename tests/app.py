@@ -54,6 +54,10 @@ class Query:
     def todo(self, id: strawberry.ID) -> Todo:
         return todos[int(id)]
 
+    @strawberry.field
+    def authorization_header(self, info: Info) -> str:
+        return info.context["request"].headers["Authorization"]
+
 
 @strawberry.type
 class Mutation:
