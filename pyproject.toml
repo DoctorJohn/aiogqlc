@@ -45,6 +45,9 @@ ruff = "^0.1.5"
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
+[tool.ruff.lint]
+extend-select = ["I"]
+
 [tool.mypy]
 plugins = "strawberry.ext.mypy_plugin"
 implicit_reexport = false

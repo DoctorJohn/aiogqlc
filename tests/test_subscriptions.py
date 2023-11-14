@@ -1,4 +1,8 @@
 import pytest
+from aiohttp import web
+from strawberry.aiohttp.handlers.graphql_ws_handler import GraphQLWSHandler
+from strawberry.aiohttp.views import GraphQLView
+
 from aiogqlc import GraphQLClient
 from aiogqlc.constants import GQL_CONNECTION_ERROR, GQL_DATA
 from aiogqlc.errors import (
@@ -6,9 +10,6 @@ from aiogqlc.errors import (
     GraphQLWSOperationError,
     GraphQLWSProtocolError,
 )
-from aiohttp import web
-from strawberry.aiohttp.handlers.graphql_ws_handler import GraphQLWSHandler
-from strawberry.aiohttp.views import GraphQLView
 from tests.app import create_app, schema
 
 

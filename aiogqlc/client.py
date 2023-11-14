@@ -5,6 +5,7 @@ from typing import Any, AsyncGenerator, Dict, List, Optional, Tuple
 
 import aiohttp
 import aiohttp.client
+
 from aiogqlc.constants import (
     GQL_COMPLETE,
     GQL_CONNECTION_ACK,
