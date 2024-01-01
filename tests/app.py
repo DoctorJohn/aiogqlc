@@ -1,5 +1,5 @@
 import asyncio
-import typing
+from typing import Any, AsyncGenerator, List, TypedDict
 
 import strawberry
 from aiohttp import web
@@ -7,6 +7,12 @@ from strawberry.aiohttp.handlers import GraphQLWSHandler
 from strawberry.aiohttp.views import GraphQLView
 from strawberry.file_uploads import Upload
 from strawberry.types import Info
+
+
+class CustomContext(TypedDict):
+    request: web.Request
+    ws: web.WebSocketResponse
+    handler: GraphQLWSHandler
 
 
 @strawberry.type
@@ -51,7 +57,7 @@ todos = [
 @strawberry.type
 class Query:
     @strawberry.field
-    def users(self) -> typing.List[User]:
+    def users(self) -> List[User]:
         return users
 
     @strawberry.field
@@ -59,7 +65,7 @@ class Query:
         return users[int(id)]
 
     @strawberry.field
-    def todos(self) -> typing.List[Todo]:
+    def todos(self) -> List[Todo]:
         return todos
 
     @strawberry.field
@@ -67,7 +73,7 @@ class Query:
         return todos[int(id)]
 
     @strawberry.field
-    def authorization_header(self, info: Info) -> str:
+    def authorization_header(self, info: Info[CustomContext, None]) -> str:
         return info.context["request"].headers["Authorization"]
 
 
@@ -78,7 +84,7 @@ class Mutation:
         return file.read().decode()
 
     @strawberry.mutation
-    def read_files(self, files: typing.List[Upload]) -> typing.List[str]:
+    def read_files(self, files: List[Upload]) -> List[str]:
         contents = []
         for file in files:
             content = file.read().decode()
@@ -108,33 +114,35 @@ class Mutation:
 @strawberry.type
 class Subscription:
     @strawberry.subscription
-    async def count(
-        self, to: int, interval: float = 0
-    ) -> typing.AsyncGenerator[int, None]:
+    async def count(self, to: int, interval: float = 0) -> AsyncGenerator[int, None]:
         for i in range(to):
             yield i + 1
             await asyncio.sleep(interval)
 
     @strawberry.subscription
-    async def infinity(self, interval: float = 1) -> typing.AsyncGenerator[str, None]:
+    async def infinity(self, interval: float = 1) -> AsyncGenerator[str, None]:
         yield "For ever"
         while True:
             await asyncio.sleep(interval)
             yield "and ever..."
 
     @strawberry.subscription
-    async def todo_added(self) -> typing.AsyncGenerator[Todo, None]:
+    async def todo_added(self) -> AsyncGenerator[Todo, None]:
         yield todos[0]
 
     @strawberry.subscription
-    async def binary_message(self, info: Info) -> typing.AsyncGenerator[int, None]:
+    async def binary_message(
+        self, info: Info[CustomContext, None]
+    ) -> AsyncGenerator[int, None]:
         ws = info.context["ws"]
         yield 1
         await ws.send_bytes(b"\n\0")
         yield 2
 
     @strawberry.subscription
-    async def message_without_id(self, info: Info) -> typing.AsyncGenerator[int, None]:
+    async def message_without_id(
+        self, info: Info[CustomContext, None]
+    ) -> AsyncGenerator[int, None]:
         ws = info.context["ws"]
         yield 1
         await ws.send_json({"type": "message-without-id"})
@@ -142,8 +150,8 @@ class Subscription:
 
     @strawberry.subscription
     async def message_with_invalid_type(
-        self, info: Info
-    ) -> typing.AsyncGenerator[int, None]:
+        self, info: Info[CustomContext, None]
+    ) -> AsyncGenerator[int, None]:
         handler = info.context["handler"]
         operation_id = list(handler.tasks.keys())[0]
         yield 1
@@ -162,11 +170,11 @@ class CustomGraphQLWSHandler(GraphQLWSHandler):
         return context
 
 
-class CustomGraphQLView(GraphQLView):
+class CustomGraphQLView(GraphQLView[CustomContext, None]):
     graphql_ws_handler_class = CustomGraphQLWSHandler
 
 
-def create_app(**kwargs):
+def create_app(**kwargs: Any):
     view = CustomGraphQLView(schema=schema, **kwargs)
     app = web.Application()
     app.router.add_route("*", "/graphql", view)
