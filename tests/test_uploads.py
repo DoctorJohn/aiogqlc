@@ -64,3 +64,35 @@ async def test_using_in_single_file_under_multiple_paths(graphql_session, tmp_pa
             ]
         }
     }
+
+
+async def test_separation_of_files_from_an_object(graphql_session):
+    file1 = BytesIO(b"Hello, World!")
+
+    query = """
+        mutation($document: DocumentInput!) {
+            readDocument(document: $document) {
+                title
+                length
+            }
+        }
+    """
+
+    variables = {
+        "document": {
+            "file": file1,
+            "title": "Some Title",
+        }
+    }
+
+    client = GraphQLClient(endpoint="/graphql", session=graphql_session)
+    response = await client.execute(query, variables=variables)
+
+    assert await response.json() == {
+        "data": {
+            "readDocument": {
+                "title": "Some Title",
+                "length": 13,
+            }
+        }
+    }

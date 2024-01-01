@@ -23,6 +23,18 @@ class Todo:
     creator: User
 
 
+@strawberry.input
+class DocumentInput:
+    file: Upload
+    title: str
+
+
+@strawberry.type
+class Document:
+    title: str
+    length: int
+
+
 users = [
     User(id=strawberry.ID("0"), name="Amelia"),
     User(id=strawberry.ID("1"), name="Bill"),
@@ -76,6 +88,11 @@ class Mutation:
             # to be reset to enable the file to be read again.
             file.seek(0)
         return contents
+
+    @strawberry.mutation
+    def read_document(self, document: DocumentInput) -> Document:
+        length = len(document.file.read().decode())
+        return Document(title=document.title, length=length)
 
     @strawberry.mutation
     def fake_user(self, id: strawberry.ID, name: str) -> User:

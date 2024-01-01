@@ -3,7 +3,7 @@ class GraphQLWSError(Exception):
 
 
 class GraphQLWSConnectionError(GraphQLWSError):
-    def __init__(self, payload: dict):
+    def __init__(self, payload: object):
         self.payload = payload
         super().__init__(payload)
 

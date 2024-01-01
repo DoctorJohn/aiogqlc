@@ -4,7 +4,6 @@ from strawberry.aiohttp.handlers.graphql_ws_handler import GraphQLWSHandler
 from strawberry.aiohttp.views import GraphQLView
 
 from aiogqlc import GraphQLClient
-from aiogqlc.constants import GQL_CONNECTION_ERROR, GQL_DATA
 from aiogqlc.errors import (
     GraphQLWSConnectionError,
     GraphQLWSOperationError,
@@ -294,7 +293,7 @@ async def test_server_connection_rejection(aiohttp_client):
     class ConnectingRejectingHandler(GraphQLWSHandler):
         async def handle_connection_init(self, message) -> None:
             await self.send_json(
-                {"type": GQL_CONNECTION_ERROR, "payload": {"message": "TEST"}}
+                {"type": "connection_error", "payload": {"message": "TEST"}}
             )
 
     class ConnectionRejectingGraphQLView(GraphQLView):
@@ -317,7 +316,7 @@ async def test_server_connection_rejection(aiohttp_client):
 async def test_server_connection_protocol_violation(aiohttp_client):
     class ProtocolViolatingHandler(GraphQLWSHandler):
         async def handle_connection_init(self, message) -> None:
-            await self.send_json({"type": GQL_DATA, "payload": {"data": "TEST"}})
+            await self.send_json({"type": "data", "payload": {"data": "TEST"}})
 
     class ProtocolViolatingGraphQLView(GraphQLView):
         graphql_ws_handler_class = ProtocolViolatingHandler
