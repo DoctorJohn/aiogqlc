@@ -1,35 +1,35 @@
-import typing
 from io import IOBase
+from typing import Any, Dict, List, Literal, TypedDict, Union
 
 from typing_extensions import NotRequired, Required, TypeAlias
 
-VariableValue: TypeAlias = typing.Union[
+VariableValue: TypeAlias = Union[
     str,
     int,
     None,
     float,
     IOBase,
-    typing.List["VariableValue"],
-    typing.Dict[str, "VariableValue"],
+    List["VariableValue"],
+    Dict[str, "VariableValue"],
 ]
 
-Variables: TypeAlias = typing.Dict[str, VariableValue]
+Variables: TypeAlias = Dict[str, VariableValue]
 
-FilesToPathsMapping: TypeAlias = typing.Dict[IOBase, typing.List[str]]
+FilesToPathsMapping: TypeAlias = Dict[IOBase, List[str]]
 
-ConnectionInitParamValue: TypeAlias = typing.Union[
+ConnectionInitParamValue: TypeAlias = Union[
     None,
     str,
     int,
     float,
-    typing.List["ConnectionInitParamValue"],
-    typing.Dict[str, "ConnectionInitParamValue"],
+    List["ConnectionInitParamValue"],
+    Dict[str, "ConnectionInitParamValue"],
 ]
 
-ConnectionInitParams: TypeAlias = typing.Dict[str, ConnectionInitParamValue]
+ConnectionInitParams: TypeAlias = Dict[str, ConnectionInitParamValue]
 
 
-class Payload(typing.TypedDict):
+class Payload(TypedDict):
     query: Required[str]
     variables: NotRequired[Variables]
     operationName: NotRequired[str]
@@ -38,27 +38,27 @@ class Payload(typing.TypedDict):
 # graphql-ws protocol types:
 
 
-class GraphQLWSConnectionInitMessage(typing.TypedDict):
-    type: typing.Literal["connection_init"]
-    payload: typing.Dict[str, typing.Any]
+class GraphQLWSConnectionInitMessage(TypedDict):
+    type: Literal["connection_init"]
+    payload: Dict[str, Any]
 
 
-class GraphQLWSStartMessage(typing.TypedDict):
-    type: typing.Literal["start"]
+class GraphQLWSStartMessage(TypedDict):
+    type: Literal["start"]
     id: str
     payload: Payload
 
 
-class GraphQLWSStopMessage(typing.TypedDict):
-    type: typing.Literal["stop"]
+class GraphQLWSStopMessage(TypedDict):
+    type: Literal["stop"]
     id: str
 
 
-class GraphQLWSConnectionTerminateMessage(typing.TypedDict):
-    type: typing.Literal["connection_terminate"]
+class GraphQLWSConnectionTerminateMessage(TypedDict):
+    type: Literal["connection_terminate"]
 
 
-GraphQLWSClientOperationMessage: TypeAlias = typing.Union[
+GraphQLWSClientOperationMessage: TypeAlias = Union[
     GraphQLWSConnectionInitMessage,
     GraphQLWSStartMessage,
     GraphQLWSStopMessage,
@@ -66,66 +66,66 @@ GraphQLWSClientOperationMessage: TypeAlias = typing.Union[
 ]
 
 
-class GraphQLWSErrorLocations(typing.TypedDict):
+class GraphQLWSErrorLocations(TypedDict):
     line: int
     column: int
 
 
-class GraphQLWSError(typing.TypedDict, total=False):
-    message: typing.Required[str]
-    locations: typing.NotRequired[typing.List[GraphQLWSErrorLocations]]
-    path: typing.NotRequired[typing.List[typing.Union[str, int]]]
-    extensions: typing.NotRequired[typing.Dict[str, typing.Any]]
+class GraphQLWSError(TypedDict, total=False):
+    message: Required[str]
+    locations: NotRequired[List[GraphQLWSErrorLocations]]
+    path: NotRequired[List[Union[str, int]]]
+    extensions: NotRequired[Dict[str, Any]]
 
 
-class GraphQLWSConnectionErrorMessage(typing.TypedDict):
-    type: typing.Literal["connection_error"]
-    payload: typing.Dict[str, typing.Any]
+class GraphQLWSConnectionErrorMessage(TypedDict):
+    type: Literal["connection_error"]
+    payload: Dict[str, Any]
 
 
-class GraphQLWSConnectionAckMessage(typing.TypedDict):
-    type: typing.Literal["connection_ack"]
+class GraphQLWSConnectionAckMessage(TypedDict):
+    type: Literal["connection_ack"]
 
 
-class GraphQLWSDataMessagePayload(typing.TypedDict, total=False):
-    data: Required[typing.Any]
-    errors: NotRequired[typing.List[GraphQLWSError]]
+class GraphQLWSDataMessagePayload(TypedDict, total=False):
+    data: Required[Any]
+    errors: NotRequired[List[GraphQLWSError]]
 
 
-class GraphQLWSDataMessage(typing.TypedDict):
-    type: typing.Literal["data"]
+class GraphQLWSDataMessage(TypedDict):
+    type: Literal["data"]
     id: str
     payload: GraphQLWSDataMessagePayload
 
 
-class GraphQLWSErrorMessage(typing.TypedDict):
-    type: typing.Literal["error"]
+class GraphQLWSErrorMessage(TypedDict):
+    type: Literal["error"]
     id: str
     payload: GraphQLWSError
 
 
-class GraphQLWSCompleteMessage(typing.TypedDict, total=True):
-    type: typing.Literal["complete"]
+class GraphQLWSCompleteMessage(TypedDict, total=True):
+    type: Literal["complete"]
     id: str
 
 
-class GraphQLWSConnectionKeepAliveMesssage(typing.TypedDict, total=True):
-    type: typing.Literal["ka"]
+class GraphQLWSConnectionKeepAliveMesssage(TypedDict, total=True):
+    type: Literal["ka"]
 
 
-GraphQLWSServerConnectionOperationMessage: TypeAlias = typing.Union[
+GraphQLWSServerConnectionOperationMessage: TypeAlias = Union[
     GraphQLWSConnectionErrorMessage,
     GraphQLWSConnectionAckMessage,
     GraphQLWSConnectionKeepAliveMesssage,
 ]
 
-GraphQLWSServerExecutionOperationMessage: TypeAlias = typing.Union[
+GraphQLWSServerExecutionOperationMessage: TypeAlias = Union[
     GraphQLWSDataMessage,
     GraphQLWSErrorMessage,
     GraphQLWSCompleteMessage,
 ]
 
-GraphQLWSServerOperationMessage: TypeAlias = typing.Union[
+GraphQLWSServerOperationMessage: TypeAlias = Union[
     GraphQLWSServerConnectionOperationMessage,
     GraphQLWSServerExecutionOperationMessage,
 ]

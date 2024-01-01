@@ -1,12 +1,12 @@
-import typing
+from typing import Optional
 
 from aiogqlc.types import Payload, Variables
 
 
 def serialize_payload(
     query: str,
-    variables: typing.Optional[Variables] = None,
-    operation: typing.Optional[str] = None,
+    variables: Optional[Variables] = None,
+    operation: Optional[str] = None,
 ) -> Payload:
     data: Payload = {"query": query}
     if variables:
