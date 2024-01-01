@@ -1,5 +1,15 @@
 # Migrating
 
+## From 4.x.x to 5.x.x
+
+The connection initialization parameters of the legacy `graphql-ws`
+protocol now default to an empty JSON object `{}` instead of `null`.
+This is to be more aligned with the reference implementation.
+
+Furthermore, various constants have been removed from `aiogqlc.constants`.
+They were not considered part of the public API, but in case you used them,
+you might need to update your code.
+
 ## From 3.x.x to 4.x.x
 
 Support for Python 3.7 was dropped because it reached its end of life.
