@@ -1,9 +1,9 @@
 import typing
 from io import IOBase
 
-from typing_extensions import NotRequired, Required
+from typing_extensions import NotRequired, Required, TypeAlias
 
-VariableValue: typing.TypeAlias = typing.Union[
+VariableValue: TypeAlias = typing.Union[
     str,
     int,
     None,
@@ -13,11 +13,11 @@ VariableValue: typing.TypeAlias = typing.Union[
     typing.Dict[str, "VariableValue"],
 ]
 
-Variables: typing.TypeAlias = typing.Dict[str, VariableValue]
+Variables: TypeAlias = typing.Dict[str, VariableValue]
 
-FilesToPathsMapping: typing.TypeAlias = typing.Dict[IOBase, typing.List[str]]
+FilesToPathsMapping: TypeAlias = typing.Dict[IOBase, typing.List[str]]
 
-ConnectionInitParamValue: typing.TypeAlias = typing.Union[
+ConnectionInitParamValue: TypeAlias = typing.Union[
     None,
     str,
     int,
@@ -26,7 +26,7 @@ ConnectionInitParamValue: typing.TypeAlias = typing.Union[
     typing.Dict[str, "ConnectionInitParamValue"],
 ]
 
-ConnectionInitParams: typing.TypeAlias = typing.Dict[str, ConnectionInitParamValue]
+ConnectionInitParams: TypeAlias = typing.Dict[str, ConnectionInitParamValue]
 
 
 class Payload(typing.TypedDict):
@@ -58,7 +58,7 @@ class GraphQLWSConnectionTerminateMessage(typing.TypedDict):
     type: typing.Literal["connection_terminate"]
 
 
-GraphQLWSClientOperationMessage: typing.TypeAlias = typing.Union[
+GraphQLWSClientOperationMessage: TypeAlias = typing.Union[
     GraphQLWSConnectionInitMessage,
     GraphQLWSStartMessage,
     GraphQLWSStopMessage,
@@ -113,19 +113,19 @@ class GraphQLWSConnectionKeepAliveMesssage(typing.TypedDict, total=True):
     type: typing.Literal["ka"]
 
 
-GraphQLWSServerConnectionOperationMessage: typing.TypeAlias = typing.Union[
+GraphQLWSServerConnectionOperationMessage: TypeAlias = typing.Union[
     GraphQLWSConnectionErrorMessage,
     GraphQLWSConnectionAckMessage,
     GraphQLWSConnectionKeepAliveMesssage,
 ]
 
-GraphQLWSServerExecutionOperationMessage: typing.TypeAlias = typing.Union[
+GraphQLWSServerExecutionOperationMessage: TypeAlias = typing.Union[
     GraphQLWSDataMessage,
     GraphQLWSErrorMessage,
     GraphQLWSCompleteMessage,
 ]
 
-GraphQLWSServerOperationMessage: typing.TypeAlias = typing.Union[
+GraphQLWSServerOperationMessage: TypeAlias = typing.Union[
     GraphQLWSServerConnectionOperationMessage,
     GraphQLWSServerExecutionOperationMessage,
 ]
