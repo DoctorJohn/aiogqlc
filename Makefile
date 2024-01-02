@@ -12,7 +12,7 @@ format:
 lint:
 	poetry run ruff check aiogqlc tests
 	poetry run ruff format --check aiogqlc tests
-	poetry run mypy aiogqlc
+	poetry run mypy aiogqlc tests
 
 .PHONY: test
 test:
