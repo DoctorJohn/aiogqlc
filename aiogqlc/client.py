@@ -265,7 +265,7 @@ class GraphQLClient:
         if variables is None:
             return None, files_to_paths_mapping
 
-        nulled_variables = dict(
+        nulled_variables: Variables = dict(
             (key, separate_files(f"variables.{key}", value))
             for key, value in variables.items()
         )
