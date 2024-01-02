@@ -35,5 +35,6 @@ nav:
       - Authentication: authentication.md
       - Advanced Usage: advanced-usage.md
   - Guides:
-      - Contributing: contributing.md
+      - Testing: testing.md
       - Migrating: migrating.md
+      - Contributing: contributing.md
