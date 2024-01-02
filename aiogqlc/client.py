@@ -7,6 +7,7 @@ from typing import (
     AsyncGenerator,
     Dict,
     List,
+    Mapping,
     Optional,
     Tuple,
     Type,
@@ -209,7 +210,7 @@ class GraphQLClient:
         query: str,
         variables: Optional[Variables] = None,
         operation: Optional[str] = None,
-        **kwargs: Dict[str, object],
+        **kwargs: Mapping[str, object],
     ) -> aiohttp.ClientResponse:
         nulled_variables, files_to_paths_mapping = self.prepare(variables)
         data_param: Dict[str, Union[aiohttp.FormData, Payload]]

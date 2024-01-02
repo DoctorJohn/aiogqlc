@@ -1,5 +1,5 @@
 from io import IOBase
-from typing import Any, Dict, List, Literal, TypedDict, Union
+from typing import Any, Dict, List, Literal, Mapping, TypedDict, Union
 
 from typing_extensions import NotRequired, Required, TypeAlias
 
@@ -10,10 +10,10 @@ VariableValue: TypeAlias = Union[
     float,
     IOBase,
     List["VariableValue"],
-    Dict[str, "VariableValue"],
+    Mapping[str, "VariableValue"],
 ]
 
-Variables: TypeAlias = Dict[str, VariableValue]
+Variables: TypeAlias = Mapping[str, VariableValue]
 
 FilesToPathsMapping: TypeAlias = Dict[IOBase, List[str]]
 
