@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "aiogqlc"
-version = "5.0.0"
+version = "5.0.1"
 description = "aiohttp based GraphQL client"
 authors = ["Jonathan Ehwald <github@ehwald.info>"]
 license = "MIT"
