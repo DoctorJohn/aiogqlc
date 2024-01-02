@@ -1,5 +1,5 @@
 from io import IOBase
-from typing import Any, Dict, List, Literal, Mapping, TypedDict, Union
+from typing import Any, Dict, List, Literal, Mapping, Sequence, TypedDict, Union
 
 from typing_extensions import NotRequired, Required, TypeAlias
 
@@ -9,24 +9,24 @@ VariableValue: TypeAlias = Union[
     None,
     float,
     IOBase,
-    List["VariableValue"],
+    Sequence["VariableValue"],
     Mapping[str, "VariableValue"],
 ]
 
 Variables: TypeAlias = Mapping[str, VariableValue]
-
-FilesToPathsMapping: TypeAlias = Dict[IOBase, List[str]]
 
 ConnectionInitParamValue: TypeAlias = Union[
     None,
     str,
     int,
     float,
-    List["ConnectionInitParamValue"],
-    Dict[str, "ConnectionInitParamValue"],
+    Sequence["ConnectionInitParamValue"],
+    Mapping[str, "ConnectionInitParamValue"],
 ]
 
-ConnectionInitParams: TypeAlias = Dict[str, ConnectionInitParamValue]
+ConnectionInitParams: TypeAlias = Mapping[str, ConnectionInitParamValue]
+
+FilesToPathsMapping: TypeAlias = Dict[IOBase, List[str]]
 
 
 class Payload(TypedDict):
@@ -40,7 +40,7 @@ class Payload(TypedDict):
 
 class GraphQLWSConnectionInitMessage(TypedDict):
     type: Literal["connection_init"]
-    payload: Dict[str, Any]
+    payload: Mapping[str, Any]
 
 
 class GraphQLWSStartMessage(TypedDict):
