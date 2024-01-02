@@ -16,6 +16,7 @@ from typing import (
 
 import aiohttp
 import aiohttp.client
+import aiohttp.test_utils
 
 from aiogqlc.constants import GRAPHQL_WS
 from aiogqlc.errors import (
@@ -45,7 +46,7 @@ class GraphQLWSManager:
     def __init__(
         self,
         endpoint: str,
-        session: aiohttp.ClientSession,
+        session: Union[aiohttp.ClientSession, aiohttp.test_utils.TestClient],
         connection_params: Optional[ConnectionInitParams] = None,
     ) -> None:
         self._endpoint = endpoint
@@ -194,7 +195,11 @@ class GraphQLWSManager:
 
 
 class GraphQLClient:
-    def __init__(self, endpoint: str, session: aiohttp.ClientSession) -> None:
+    def __init__(
+        self,
+        endpoint: str,
+        session: Union[aiohttp.ClientSession, aiohttp.test_utils.TestClient],
+    ) -> None:
         self.endpoint = endpoint
         self.session = session
 
