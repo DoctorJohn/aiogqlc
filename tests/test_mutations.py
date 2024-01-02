@@ -1,7 +1,9 @@
+import aiohttp
+
 from aiogqlc import GraphQLClient
 
 
-async def test_mutation_with_flat_response(graphql_session):
+async def test_mutation_with_flat_response(graphql_session: aiohttp.ClientSession):
     query = """
         mutation {
             fakeUser(id: 7, name: "John Smith") {
@@ -19,7 +21,9 @@ async def test_mutation_with_flat_response(graphql_session):
     }
 
 
-async def test_mutation_with_nested_fields_in_response(graphql_session):
+async def test_mutation_with_nested_fields_in_response(
+    graphql_session: aiohttp.ClientSession,
+):
     query = """
         mutation {
             fakeTodo(id: 7, title: "TODO", priority: 10, creator: 1) {

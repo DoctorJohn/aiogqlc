@@ -1,8 +1,13 @@
+import aiohttp
+
 from aiogqlc import GraphQLClient
 from tests.app import create_app
+from tests.types import AiohttpClient
 
 
-async def test_execute_extra_kwargs_are_passed_to_aiohttp(graphql_session):
+async def test_execute_extra_kwargs_are_passed_to_aiohttp(
+    graphql_session: aiohttp.ClientSession,
+):
     query = """
         query {
             authorizationHeader
@@ -15,7 +20,7 @@ async def test_execute_extra_kwargs_are_passed_to_aiohttp(graphql_session):
     assert await response.json() == {"data": {"authorizationHeader": "Bearer Token123"}}
 
 
-async def test_default_headers_can_be_overridden(aiohttp_client):
+async def test_default_headers_can_be_overridden(aiohttp_client: AiohttpClient):
     app = create_app()
     graphql_session = await aiohttp_client(
         app, headers={"Authorization": "Bearer DefaultToken"}

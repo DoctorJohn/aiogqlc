@@ -1,3 +1,6 @@
+from typing import Any, List
+
+import aiohttp
 import pytest
 from aiohttp import web
 from strawberry.aiohttp.handlers.graphql_ws_handler import GraphQLWSHandler
@@ -10,9 +13,10 @@ from aiogqlc.errors import (
     GraphQLWSProtocolError,
 )
 from tests.app import create_app, schema
+from tests.types import AiohttpClient
 
 
-async def test_choosing_unsupported_protocol(graphql_session):
+async def test_choosing_unsupported_protocol(graphql_session: aiohttp.ClientSession):
     client = GraphQLClient(endpoint="/graphql", session=graphql_session)
     unsupported_protocol = "imaginary-protocol"
 
@@ -22,7 +26,7 @@ async def test_choosing_unsupported_protocol(graphql_session):
     assert unsupported_protocol in str(exc_info.value)
 
 
-async def test_server_completed_subscription(graphql_session):
+async def test_server_completed_subscription(graphql_session: aiohttp.ClientSession):
     query = """
         subscription {
             count(to: 3)
@@ -31,7 +35,7 @@ async def test_server_completed_subscription(graphql_session):
 
     client = GraphQLClient(endpoint="/graphql", session=graphql_session)
 
-    data = []
+    data: List[int] = []
 
     async with client.connect() as connection:
         async for payload in connection.subscribe(query):
@@ -40,7 +44,7 @@ async def test_server_completed_subscription(graphql_session):
     assert data == [1, 2, 3]
 
 
-async def test_subscribing_nested_fields(graphql_session):
+async def test_subscribing_nested_fields(graphql_session: aiohttp.ClientSession):
     query = """
         subscription {
             todoAdded {
@@ -70,7 +74,7 @@ async def test_subscribing_nested_fields(graphql_session):
             }
 
 
-async def test_passing_variables(graphql_session):
+async def test_passing_variables(graphql_session: aiohttp.ClientSession):
     query = """
         subscription ($to: Int!) {
             count(to: $to)
@@ -81,7 +85,7 @@ async def test_passing_variables(graphql_session):
 
     client = GraphQLClient(endpoint="/graphql", session=graphql_session)
 
-    data = []
+    data: List[int] = []
 
     async with client.connect() as connection:
         async for payload in connection.subscribe(query, variables=variables):
@@ -90,7 +94,7 @@ async def test_passing_variables(graphql_session):
     assert data == [1, 2, 3]
 
 
-async def test_missing_variables(graphql_session):
+async def test_missing_variables(graphql_session: aiohttp.ClientSession):
     query = """
         subscription ($to: Int!) {
             count(to: $to)
@@ -106,10 +110,11 @@ async def test_missing_variables(graphql_session):
 
     payload = exc_info.value.payload
     expectation = "Variable '$to' of required type 'Int!' was not provided."
+    assert isinstance(payload, dict)
     assert payload["message"] == expectation
 
 
-async def test_operation_selection(graphql_session):
+async def test_operation_selection(graphql_session: aiohttp.ClientSession):
     query = """
         subscription Subscription1 {
             count(to: 1)
@@ -121,7 +126,7 @@ async def test_operation_selection(graphql_session):
 
     client = GraphQLClient(endpoint="/graphql", session=graphql_session)
 
-    data = []
+    data: List[int] = []
 
     async with client.connect() as connection:
         async for payload in connection.subscribe(query, operation="Subscription2"):
@@ -130,7 +135,7 @@ async def test_operation_selection(graphql_session):
     assert data == [1, 2]
 
 
-async def test_unknown_operation_selection(graphql_session):
+async def test_unknown_operation_selection(graphql_session: aiohttp.ClientSession):
     query = """
         subscription Subscription1 {
             count(to: 1)
@@ -146,10 +151,11 @@ async def test_unknown_operation_selection(graphql_session):
 
     payload = exc_info.value.payload
     expectation = "Unknown operation named 'Subscription2'."
+    assert isinstance(payload, dict)
     assert payload["message"] == expectation
 
 
-async def test_missing_operation_selection(graphql_session):
+async def test_missing_operation_selection(graphql_session: aiohttp.ClientSession):
     query = """
         subscription Subscription1 {
             count(to: 1)
@@ -168,10 +174,11 @@ async def test_missing_operation_selection(graphql_session):
 
     payload = exc_info.value.payload
     expectation = "Must provide operation name if query contains multiple operations."
+    assert isinstance(payload, dict)
     assert payload["message"] == expectation
 
 
-async def test_unsubscribing(graphql_session):
+async def test_unsubscribing(graphql_session: aiohttp.ClientSession):
     query = """
         subscription {
             count(to: 3)
@@ -185,7 +192,7 @@ async def test_unsubscribing(graphql_session):
             break
 
 
-async def test_operation_id_counter(graphql_session):
+async def test_operation_id_counter(graphql_session: aiohttp.ClientSession):
     query = """
         subscription {
             count(to: 3)
@@ -197,23 +204,25 @@ async def test_operation_id_counter(graphql_session):
     async with client.connect() as connection:
         async for _ in connection.subscribe(query):
             break
-        assert connection._last_operation_id == 1
+        assert connection._last_operation_id == 1  # pyright: ignore[reportPrivateUsage]
 
         async for _ in connection.subscribe(query):
             break
-        assert connection._last_operation_id == 2
+        assert connection._last_operation_id == 2  # pyright: ignore[reportPrivateUsage]
 
     async with client.connect() as connection:
         async for _ in connection.subscribe(query):
             break
-        assert connection._last_operation_id == 1
+        assert connection._last_operation_id == 1  # pyright: ignore[reportPrivateUsage]
 
         async for _ in connection.subscribe(query):
             break
-        assert connection._last_operation_id == 2
+        assert connection._last_operation_id == 2  # pyright: ignore[reportPrivateUsage]
 
 
-async def test_sequential_subscriptions_using_one_connection(graphql_session):
+async def test_sequential_subscriptions_using_one_connection(
+    graphql_session: aiohttp.ClientSession,
+):
     query = """
         subscription {
             count(to: 3)
@@ -222,8 +231,8 @@ async def test_sequential_subscriptions_using_one_connection(graphql_session):
 
     client = GraphQLClient(endpoint="/graphql", session=graphql_session)
 
-    data1 = []
-    data2 = []
+    data1: List[int] = []
+    data2: List[int] = []
 
     async with client.connect() as connection:
         async for payload in connection.subscribe(query):
@@ -236,7 +245,9 @@ async def test_sequential_subscriptions_using_one_connection(graphql_session):
     assert data2 == [1, 2, 3]
 
 
-async def test_parallel_subscriptions_using_one_connection(graphql_session):
+async def test_parallel_subscriptions_using_one_connection(
+    graphql_session: aiohttp.ClientSession,
+):
     query = """
         subscription {
             count(to: 3)
@@ -245,8 +256,8 @@ async def test_parallel_subscriptions_using_one_connection(graphql_session):
 
     client = GraphQLClient(endpoint="/graphql", session=graphql_session)
 
-    data1 = []
-    data2 = []
+    data1: List[int] = []
+    data2: List[int] = []
 
     async with client.connect() as connection:
         subscription1 = connection.subscribe(query)
@@ -265,7 +276,9 @@ async def test_parallel_subscriptions_using_one_connection(graphql_session):
     assert data2 == [1, 2, 3]
 
 
-async def test_reusing_a_connection_after_cancelling_a_subscription(graphql_session):
+async def test_reusing_a_connection_after_cancelling_a_subscription(
+    graphql_session: aiohttp.ClientSession,
+):
     query = """
         subscription {
             count(to: 3)
@@ -274,8 +287,8 @@ async def test_reusing_a_connection_after_cancelling_a_subscription(graphql_sess
 
     client = GraphQLClient(endpoint="/graphql", session=graphql_session)
 
-    data1 = []
-    data2 = []
+    data1: List[int] = []
+    data2: List[int] = []
 
     async with client.connect() as connection:
         async for payload in connection.subscribe(query):
@@ -289,14 +302,14 @@ async def test_reusing_a_connection_after_cancelling_a_subscription(graphql_sess
     assert data2 == [1, 2, 3]
 
 
-async def test_server_connection_rejection(aiohttp_client):
+async def test_server_connection_rejection(aiohttp_client: AiohttpClient):
     class ConnectingRejectingHandler(GraphQLWSHandler):
-        async def handle_connection_init(self, message) -> None:
+        async def handle_connection_init(self, message: Any) -> None:
             await self.send_json(
                 {"type": "connection_error", "payload": {"message": "TEST"}}
             )
 
-    class ConnectionRejectingGraphQLView(GraphQLView):
+    class ConnectionRejectingGraphQLView(GraphQLView[Any, None]):
         graphql_ws_handler_class = ConnectingRejectingHandler
 
     app = web.Application()
@@ -310,15 +323,16 @@ async def test_server_connection_rejection(aiohttp_client):
             pass
 
     payload = exc_info.value.payload
+    assert isinstance(payload, dict)
     assert payload["message"] == "TEST"
 
 
-async def test_server_connection_protocol_violation(aiohttp_client):
+async def test_server_connection_protocol_violation(aiohttp_client: AiohttpClient):
     class ProtocolViolatingHandler(GraphQLWSHandler):
-        async def handle_connection_init(self, message) -> None:
+        async def handle_connection_init(self, message: Any) -> None:
             await self.send_json({"type": "data", "payload": {"data": "TEST"}})
 
-    class ProtocolViolatingGraphQLView(GraphQLView):
+    class ProtocolViolatingGraphQLView(GraphQLView[Any, None]):
         graphql_ws_handler_class = ProtocolViolatingHandler
 
     app = web.Application()
@@ -332,7 +346,7 @@ async def test_server_connection_protocol_violation(aiohttp_client):
             pass
 
 
-async def test_keep_alive_message_handling(aiohttp_client):
+async def test_keep_alive_message_handling(aiohttp_client: AiohttpClient):
     app = create_app(keep_alive_interval=0.1)
 
     graphql_session = await aiohttp_client(app)
@@ -344,7 +358,7 @@ async def test_keep_alive_message_handling(aiohttp_client):
         }
     """
 
-    data = []
+    data: List[int] = []
 
     async with client.connect() as connection:
         async for payload in connection.subscribe(query):
@@ -353,7 +367,7 @@ async def test_keep_alive_message_handling(aiohttp_client):
     assert data == [1, 2, 3]
 
 
-async def test_client_ignores_non_text_messages(graphql_session):
+async def test_client_ignores_non_text_messages(graphql_session: aiohttp.ClientSession):
     query = """
         subscription {
             binaryMessage
@@ -362,7 +376,7 @@ async def test_client_ignores_non_text_messages(graphql_session):
 
     client = GraphQLClient(endpoint="/graphql", session=graphql_session)
 
-    data = []
+    data: List[int] = []
 
     async with client.connect() as connection:
         async for payload in connection.subscribe(query):
@@ -371,7 +385,9 @@ async def test_client_ignores_non_text_messages(graphql_session):
     assert data == [1, 2]
 
 
-async def test_client_ignores_messages_without_id(graphql_session):
+async def test_client_ignores_messages_without_id(
+    graphql_session: aiohttp.ClientSession,
+):
     query = """
         subscription {
             messageWithoutId
@@ -380,7 +396,7 @@ async def test_client_ignores_messages_without_id(graphql_session):
 
     client = GraphQLClient(endpoint="/graphql", session=graphql_session)
 
-    data = []
+    data: List[int] = []
 
     async with client.connect() as connection:
         async for payload in connection.subscribe(query):
@@ -389,7 +405,9 @@ async def test_client_ignores_messages_without_id(graphql_session):
     assert data == [1, 2]
 
 
-async def test_client_ignores_messages_with_invalid_type(graphql_session):
+async def test_client_ignores_messages_with_invalid_type(
+    graphql_session: aiohttp.ClientSession,
+):
     query = """
         subscription {
             messageWithInvalidType
@@ -398,7 +416,7 @@ async def test_client_ignores_messages_with_invalid_type(graphql_session):
 
     client = GraphQLClient(endpoint="/graphql", session=graphql_session)
 
-    data = []
+    data: List[int] = []
 
     async with client.connect() as connection:
         async for payload in connection.subscribe(query):

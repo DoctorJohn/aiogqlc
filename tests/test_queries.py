@@ -1,7 +1,9 @@
+import aiohttp
+
 from aiogqlc import GraphQLClient
 
 
-async def test_query_flat_list(graphql_session):
+async def test_query_flat_list(graphql_session: aiohttp.ClientSession):
     query = """
         query {
             todos {
@@ -26,7 +28,7 @@ async def test_query_flat_list(graphql_session):
     }
 
 
-async def test_query_list_with_nested_fields(graphql_session):
+async def test_query_list_with_nested_fields(graphql_session: aiohttp.ClientSession):
     query = """
         query {
             todos {
@@ -53,7 +55,7 @@ async def test_query_list_with_nested_fields(graphql_session):
     }
 
 
-async def test_query_flat_object(graphql_session):
+async def test_query_flat_object(graphql_session: aiohttp.ClientSession):
     query = """
         query {
             todo(id: 1) {
@@ -72,7 +74,7 @@ async def test_query_flat_object(graphql_session):
     }
 
 
-async def test_query_object_with_nested_fields(graphql_session):
+async def test_query_object_with_nested_fields(graphql_session: aiohttp.ClientSession):
     query = """
         query {
             todo(id: 1) {
@@ -93,7 +95,7 @@ async def test_query_object_with_nested_fields(graphql_session):
     }
 
 
-async def test_selecting_an_operation(graphql_session):
+async def test_selecting_an_operation(graphql_session: aiohttp.ClientSession):
     query = """
         query Operation1 {
             todos {
