@@ -36,7 +36,7 @@ jobs:
       - name: Install library
         run: poetry install --no-interaction
       - name: Run tests and collect coverage
-        run: poetry run pytest --cov=aiogqlc --cov-report=xml
+        run: poetry run pytest -vv --cov=aiogqlc --cov-report=xml
       - name: Upload coverage reports to Codecov with GitHub Action
         uses: codecov/codecov-action@v4
         with:
