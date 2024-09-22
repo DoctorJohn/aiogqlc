@@ -7,7 +7,7 @@
 [![License][license-image]][license-url]
 
 [versions-image]: https://img.shields.io/pypi/pyversions/aiogqlc
-[versions-url]: https://github.com/DoctorJohn/aiogqlc/blob/master/setup.py
+[versions-url]: https://github.com/DoctorJohn/aiogqlc/blob/main/pyproject.toml
 [pypi-image]: https://img.shields.io/pypi/v/aiogqlc
 [pypi-url]: https://pypi.org/project/aiogqlc/
 [downloads-image]: https://img.shields.io/pypi/dm/aiogqlc
@@ -15,7 +15,7 @@
 [codecov-image]: https://codecov.io/gh/DoctorJohn/aiogqlc/branch/main/graph/badge.svg
 [codecov-url]: https://codecov.io/gh/DoctorJohn/aiogqlc
 [license-image]: https://img.shields.io/pypi/l/aiogqlc
-[license-url]: https://github.com/DoctorJohn/aiogqlc/blob/master/LICENSE
+[license-url]: https://github.com/DoctorJohn/aiogqlc/blob/main/LICENSE
 
 A Python asynchronous/IO GraphQL client based on [aiohttp][aiohttp-url].
 
