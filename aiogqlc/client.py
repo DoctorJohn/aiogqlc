@@ -7,7 +7,6 @@ from typing import (
     AsyncGenerator,
     Dict,
     List,
-    Mapping,
     Optional,
     Tuple,
     Type,
@@ -35,7 +34,6 @@ from aiogqlc.types import (
     GraphQLWSServerOperationMessage,
     GraphQLWSStartMessage,
     GraphQLWSStopMessage,
-    Payload,
     Variables,
     VariableValue,
 )
@@ -215,10 +213,9 @@ class GraphQLClient:
         query: str,
         variables: Optional[Variables] = None,
         operation: Optional[str] = None,
-        **kwargs: Mapping[str, object],
+        **kwargs,
     ) -> aiohttp.ClientResponse:
         nulled_variables, files_to_paths_mapping = self.prepare(variables)
-        data_param: Dict[str, Union[aiohttp.FormData, Payload]]
 
         if files_to_paths_mapping:
             form_data = self.prepare_multipart(
@@ -227,12 +224,12 @@ class GraphQLClient:
                 files_to_paths_mapping=files_to_paths_mapping,
                 operation=operation,
             )
-            data_param = {"data": form_data}
+            kwargs["data"] = form_data
         else:
             json_data = serialize_payload(query, variables, operation)
-            data_param = {"json": json_data}
+            kwargs["json"] = json_data
 
-        async with self.session.post(self.endpoint, **kwargs, **data_param) as response:
+        async with self.session.post(self.endpoint, **kwargs) as response:
             await response.read()
             return response
 
