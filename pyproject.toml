@@ -1,14 +1,12 @@
-[tool.poetry]
+[project]
 name = "aiogqlc"
 version = "5.3.0"
 description = "aiohttp based GraphQL client"
-authors = ["Jonathan Ehwald <github@ehwald.info>"]
-license = "MIT"
+authors = [{ name = "Jonathan Ehwald", email = "github@ehwald.info" }]
+license = { text = "MIT" }
 readme = "README.md"
-packages = [{include = "aiogqlc"}]
-homepage = "https://github.com/DoctorJohn/aiogqlc"
-repository = "https://github.com/DoctorJohn/aiogqlc"
-documentation = "https://github.com/DoctorJohn/aiogqlc"
+requires-python = ">=3.9,<4.0"
+dependencies = ["aiohttp (>=3.6.0,<4.0.0)"]
 classifiers = [
     "Environment :: Web Environment",
     "Intended Audience :: Developers",
@@ -25,9 +23,17 @@ classifiers = [
     "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
 ]
 
-[tool.poetry.dependencies]
-python = "^3.9"
-aiohttp = "^3.6.0"
+[project.urls]
+homepage = "https://github.com/DoctorJohn/aiogqlc"
+repository = "https://github.com/DoctorJohn/aiogqlc"
+documentation = "https://github.com/DoctorJohn/aiogqlc"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+packages = [{ include = "aiogqlc" }]
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.5.0"
@@ -40,10 +46,6 @@ mypy = "^1.11.1"
 mkdocs = "^1.5.2"
 mkdocs-material = "^9.2.8"
 ruff = "^0.6.7"
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
 
 [tool.ruff.lint]
 extend-select = ["I"]
