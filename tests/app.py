@@ -1,4 +1,5 @@
 import asyncio
+from io import BytesIO
 from typing import Any, AsyncGenerator, List, TypedDict, Union
 
 import strawberry
@@ -29,7 +30,7 @@ class Todo:
 
 @strawberry.input
 class DocumentInput:
-    file: Upload
+    file: BytesIO
     title: str
 
 
@@ -78,11 +79,11 @@ class Query:
 @strawberry.type
 class Mutation:
     @strawberry.mutation
-    def read_file(self, file: Upload) -> str:
+    def read_file(self, file: BytesIO) -> str:
         return file.read().decode()
 
     @strawberry.mutation
-    def read_files(self, files: List[Upload]) -> List[str]:
+    def read_files(self, files: List[BytesIO]) -> List[str]:
         contents = []
         for file in files:
             content = file.read().decode()
@@ -160,7 +161,12 @@ class Subscription:
         yield 2
 
 
-schema = strawberry.Schema(query=Query, mutation=Mutation, subscription=Subscription)
+schema = strawberry.Schema(
+    query=Query,
+    mutation=Mutation,
+    subscription=Subscription,
+    scalar_overrides={BytesIO: Upload},
+)
 
 
 def create_app(**kwargs: Any):
