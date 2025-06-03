@@ -1,9 +1,8 @@
 import asyncio
-from typing import Any, AsyncGenerator, List, TypedDict
+from typing import Any, AsyncGenerator, List, TypedDict, Union
 
 import strawberry
 from aiohttp import web
-from strawberry.aiohttp.handlers import GraphQLWSHandler
 from strawberry.aiohttp.views import GraphQLView
 from strawberry.file_uploads import Upload
 from strawberry.types import Info
@@ -11,8 +10,7 @@ from strawberry.types import Info
 
 class CustomContext(TypedDict):
     request: web.Request
-    ws: web.WebSocketResponse
-    handler: GraphQLWSHandler
+    response: Union[web.Response, web.WebSocketResponse]
 
 
 @strawberry.type
@@ -73,7 +71,7 @@ class Query:
         return todos[int(id)]
 
     @strawberry.field
-    def authorization_header(self, info: Info[CustomContext, None]) -> str:
+    def authorization_header(self, info: Info) -> str:
         return info.context["request"].headers["Authorization"]
 
 
@@ -134,7 +132,8 @@ class Subscription:
     async def binary_message(
         self, info: Info[CustomContext, None]
     ) -> AsyncGenerator[int, None]:
-        ws = info.context["ws"]
+        ws = info.context["response"]
+        assert isinstance(ws, web.WebSocketResponse)
         yield 1
         await ws.send_bytes(b"\n\0")
         yield 2
@@ -143,7 +142,8 @@ class Subscription:
     async def message_without_id(
         self, info: Info[CustomContext, None]
     ) -> AsyncGenerator[int, None]:
-        ws = info.context["ws"]
+        ws = info.context["response"]
+        assert isinstance(ws, web.WebSocketResponse)
         yield 1
         await ws.send_json({"type": "message-without-id"})
         yield 2
@@ -152,30 +152,19 @@ class Subscription:
     async def message_with_invalid_type(
         self, info: Info[CustomContext, None]
     ) -> AsyncGenerator[int, None]:
-        handler = info.context["handler"]
-        operation_id = list(handler.tasks.keys())[0]
+        ws = info.context["response"]
+        assert isinstance(ws, web.WebSocketResponse)
+
         yield 1
-        await handler.send_message("invalid-type", operation_id)
+        await ws.send_json({"type": "invalid-type", "id": "1"})
         yield 2
 
 
 schema = strawberry.Schema(query=Query, mutation=Mutation, subscription=Subscription)
 
 
-class CustomGraphQLWSHandler(GraphQLWSHandler):
-    async def get_context(self):
-        context = await super().get_context()
-        context["ws"] = self._ws
-        context["handler"] = self
-        return context
-
-
-class CustomGraphQLView(GraphQLView[CustomContext, None]):
-    graphql_ws_handler_class = CustomGraphQLWSHandler
-
-
 def create_app(**kwargs: Any):
-    view = CustomGraphQLView(schema=schema, **kwargs)
+    view = GraphQLView(schema=schema, multipart_uploads_enabled=True, **kwargs)
     app = web.Application()
     app.router.add_route("*", "/graphql", view)
     return app

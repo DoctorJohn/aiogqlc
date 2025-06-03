@@ -10,4 +10,4 @@ repos:
     hooks:
       - id: mypy
         additional_dependencies:
-          - "strawberry-graphql==0.239.2"
+          - "strawberry-graphql==0.270.5"
