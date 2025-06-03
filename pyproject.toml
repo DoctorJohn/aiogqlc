@@ -23,30 +23,27 @@ classifiers = [
     "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
 ]
 
-[project.urls]
-homepage = "https://github.com/DoctorJohn/aiogqlc"
-repository = "https://github.com/DoctorJohn/aiogqlc"
-documentation = "https://github.com/DoctorJohn/aiogqlc"
-
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
-[tool.poetry]
-packages = [{ include = "aiogqlc" }]
+[dependency-groups]
+dev = [
+    "pre-commit>=4.2.0",
+    "pytest>=8.3.3",
+    "pytest-cov>=6.1.1",
+    "pytest-asyncio>=1.0.0",
+    "pytest-aiohttp>=1.0.4",
+    "pytest-randomly>=3.16.0",
+    "strawberry-graphql>=0.270.5",
+    "mypy>=1.11.1",
+    "mkdocs>=1.5.2",
+    "mkdocs-material>=9.2.8",
+    "ruff>=0.11.12",
+]
 
-[tool.poetry.group.dev.dependencies]
-pre-commit = "^4.2.0"
-pytest = "^8.3.3"
-pytest-cov = "^6.1.1"
-pytest-asyncio = "^1.0.0"
-pytest-aiohttp = "^1.0.4"
-pytest-randomly = "^3.16.0"
-strawberry-graphql = "^0.270.5"
-mypy = "^1.11.1"
-mkdocs = "^1.5.2"
-mkdocs-material = "^9.2.8"
-ruff = "^0.11.12"
+[tool.hatch.build.targets.wheel]
+packages = ["aiogqlc"]
 
 [tool.ruff.lint]
 extend-select = ["I"]
