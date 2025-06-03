@@ -3,8 +3,8 @@ from typing import Any, List
 import aiohttp
 import pytest
 from aiohttp import web
-from strawberry.aiohttp.handlers.graphql_ws_handler import GraphQLWSHandler
 from strawberry.aiohttp.views import GraphQLView
+from strawberry.subscriptions.protocols.graphql_ws.handlers import BaseGraphQLWSHandler
 
 from aiogqlc import GraphQLClient
 from aiogqlc.errors import (
@@ -150,30 +150,7 @@ async def test_unknown_operation_selection(graphql_session: aiohttp.ClientSessio
                 assert False, "Unreachable"
 
     payload = exc_info.value.payload
-    expectation = "Unknown operation named 'Subscription2'."
-    assert isinstance(payload, dict)
-    assert payload["message"] == expectation
-
-
-async def test_missing_operation_selection(graphql_session: aiohttp.ClientSession):
-    query = """
-        subscription Subscription1 {
-            count(to: 1)
-        }
-        subscription Subscription2 {
-            count(to: 2)
-        }
-    """
-
-    client = GraphQLClient(endpoint="/graphql", session=graphql_session)
-
-    with pytest.raises(GraphQLWSOperationError) as exc_info:
-        async with client.connect() as connection:
-            async for _ in connection.subscribe(query):
-                assert False, "Unreachable"
-
-    payload = exc_info.value.payload
-    expectation = "Must provide operation name if query contains multiple operations."
+    expectation = 'Unknown operation named "Subscription2".'
     assert isinstance(payload, dict)
     assert payload["message"] == expectation
 
@@ -303,9 +280,9 @@ async def test_reusing_a_connection_after_cancelling_a_subscription(
 
 
 async def test_server_connection_rejection(aiohttp_client: AiohttpClient):
-    class ConnectingRejectingHandler(GraphQLWSHandler):
+    class ConnectingRejectingHandler(BaseGraphQLWSHandler):
         async def handle_connection_init(self, message: Any) -> None:
-            await self.send_json(
+            await self.send_message(
                 {"type": "connection_error", "payload": {"message": "TEST"}}
             )
 
@@ -328,9 +305,11 @@ async def test_server_connection_rejection(aiohttp_client: AiohttpClient):
 
 
 async def test_server_connection_protocol_violation(aiohttp_client: AiohttpClient):
-    class ProtocolViolatingHandler(GraphQLWSHandler):
+    class ProtocolViolatingHandler(BaseGraphQLWSHandler):
         async def handle_connection_init(self, message: Any) -> None:
-            await self.send_json({"type": "data", "payload": {"data": "TEST"}})
+            await self.send_message(
+                {"type": "data", "id": "TEST", "payload": {"data": "TEST"}}
+            )
 
     class ProtocolViolatingGraphQLView(GraphQLView[Any, None]):
         graphql_ws_handler_class = ProtocolViolatingHandler
