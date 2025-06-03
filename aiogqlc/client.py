@@ -53,8 +53,8 @@ class GraphQLWSManager:
         self._last_operation_id = 0
         self._ws_context: AsyncContextManager[aiohttp.ClientWebSocketResponse]
         self._ws: aiohttp.ClientWebSocketResponse
-        self._operations_message_queues: Dict[
-            str, asyncio.Queue[GraphQLWSServerOperationMessage]
+        self._execution_operation_message_queues: Dict[
+            str, asyncio.Queue[GraphQLWSServerExecutionOperationMessage]
         ] = {}
         self._connection_handler_task: asyncio.Task[None]
 
@@ -84,7 +84,7 @@ class GraphQLWSManager:
         operation: Optional[str] = None,
     ) -> AsyncGenerator[GraphQLWSDataMessagePayload, None]:
         operation_id = self.get_next_operation_id()
-        self._operations_message_queues[operation_id] = asyncio.Queue()
+        self._execution_operation_message_queues[operation_id] = asyncio.Queue()
 
         await self.start_operation(operation_id, query, variables, operation)
         operation_handler = self.handle_operation(operation_id)
@@ -158,7 +158,7 @@ class GraphQLWSManager:
         self, operation_id: str
     ) -> AsyncGenerator[GraphQLWSDataMessagePayload, None]:
         while True:
-            operation_message = await self._operations_message_queues[
+            operation_message = await self._execution_operation_message_queues[
                 operation_id
             ].get()
 
@@ -166,17 +166,20 @@ class GraphQLWSManager:
                 yield operation_message["payload"]
                 continue
 
-            if operation_message["type"] == "error":
+            elif operation_message["type"] == "error":
                 raise GraphQLWSOperationError(operation_message["payload"])
 
-            if operation_message["type"] == "complete":
+            else:
+                assert operation_message["type"] == "complete"
                 return
 
     def yield_operation_message(
         self, operation_message: GraphQLWSServerExecutionOperationMessage
     ) -> None:
         operation_id = operation_message["id"]
-        self._operations_message_queues[operation_id].put_nowait(operation_message)
+        self._execution_operation_message_queues[operation_id].put_nowait(
+            operation_message
+        )
 
     async def stop_operation(self, operation_id: str) -> None:
         stop_message: GraphQLWSStopMessage = {
