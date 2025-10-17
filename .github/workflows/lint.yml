@@ -26,5 +26,5 @@ jobs:
       - name: Lint
         run: |
           uv run ruff check aiogqlc tests
-          uv run ruff format --check aiogqlc tests
+          uv run ruff format --diff aiogqlc tests
           uv run mypy aiogqlc
