@@ -3,6 +3,7 @@ from typing import Any, List
 import aiohttp
 import pytest
 from aiohttp import web
+from pytest_aiohttp import AiohttpClient
 from strawberry.aiohttp.views import GraphQLView
 from strawberry.subscriptions.protocols.graphql_ws.handlers import BaseGraphQLWSHandler
 
@@ -13,7 +14,6 @@ from aiogqlc.errors import (
     GraphQLWSProtocolError,
 )
 from tests.app import create_app, schema
-from tests.types import AiohttpClient
 
 
 async def test_choosing_unsupported_protocol(graphql_session: aiohttp.ClientSession):

@@ -1,8 +1,8 @@
 import aiohttp
+from pytest_aiohttp import AiohttpClient
 
 from aiogqlc import GraphQLClient
 from tests.app import create_app
-from tests.types import AiohttpClient
 
 
 async def test_execute_extra_kwargs_are_passed_to_aiohttp(
