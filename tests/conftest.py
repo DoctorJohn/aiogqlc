@@ -1,9 +1,9 @@
 import asyncio
 
 import pytest_asyncio
+from pytest_aiohttp import AiohttpClient
 
 from tests.app import create_app
-from tests.types import AiohttpClient
 
 
 @pytest_asyncio.fixture
