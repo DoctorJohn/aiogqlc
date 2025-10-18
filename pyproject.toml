@@ -1,6 +1,6 @@
 [project]
 name = "aiogqlc"
-version = "5.3.0"
+version = "5.4.0"
 description = "aiohttp based GraphQL client"
 authors = [{ name = "Jonathan Ehwald", email = "github@ehwald.info" }]
 license = { text = "MIT" }
