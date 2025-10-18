@@ -9,7 +9,7 @@ import asyncio
 import aiohttp
 from aiogqlc import GraphQLClient
 
-ENDPOINT = "https://swapi-graphql.netlify.app/.netlify/functions/index"
+endpoint = "https://swapi-graphql.netlify.app/graphql"
 
 document = """
     query {
@@ -24,7 +24,7 @@ document = """
 
 async def main():
     async with aiohttp.ClientSession() as session:
-        client = GraphQLClient(document, session=session)
+        client = GraphQLClient(endpoint, session=session)
         response = await client.execute(document)
         print(await response.json())
 
@@ -39,7 +39,7 @@ if __name__ == "__main__":
 import aiohttp
 from aiogqlc import GraphQLClient
 
-ENDPOINT = "https://swapi-graphql.netlify.app/.netlify/functions/index"
+endpoint = "https://swapi-graphql.netlify.app/graphql"
 
 document = """
     query ($count: Int!) {
@@ -58,7 +58,7 @@ variables = {
 
 async def main():
     async with aiohttp.ClientSession() as session:
-        client = GraphQLClient(ENDPOINT, session=session)
+        client = GraphQLClient(endpoint, session=session)
         response = await client.execute(document, variables=variables)
         print(await response.json())
 
@@ -73,7 +73,7 @@ if __name__ == "__main__":
 import aiohttp
 from aiogqlc import GraphQLClient
 
-ENDPOINT = "https://swapi-graphql.netlify.app/.netlify/functions/index"
+endpoint = "https://swapi-graphql.netlify.app/graphql"
 
 document = """
     query Operation1 {
@@ -91,7 +91,7 @@ document = """
 
 async def main():
     async with aiohttp.ClientSession() as session:
-        client = GraphQLClient(ENDPOINT, session=session)
+        client = GraphQLClient(endpoint, session=session)
         response = await client.execute(document, operation="Operation2")
         print(await response.json())
 
