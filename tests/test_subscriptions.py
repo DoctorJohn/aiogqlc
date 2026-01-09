@@ -1,4 +1,4 @@
-from typing import Any, List
+from typing import Any
 
 import aiohttp
 import pytest
@@ -35,7 +35,7 @@ async def test_server_completed_subscription(graphql_session: aiohttp.ClientSess
 
     client = GraphQLClient(endpoint="/graphql", session=graphql_session)
 
-    data: List[int] = []
+    data: list[int] = []
 
     async with client.connect() as connection:
         async for payload in connection.subscribe(query):
@@ -85,7 +85,7 @@ async def test_passing_variables(graphql_session: aiohttp.ClientSession):
 
     client = GraphQLClient(endpoint="/graphql", session=graphql_session)
 
-    data: List[int] = []
+    data: list[int] = []
 
     async with client.connect() as connection:
         async for payload in connection.subscribe(query, variables=variables):
@@ -126,7 +126,7 @@ async def test_operation_selection(graphql_session: aiohttp.ClientSession):
 
     client = GraphQLClient(endpoint="/graphql", session=graphql_session)
 
-    data: List[int] = []
+    data: list[int] = []
 
     async with client.connect() as connection:
         async for payload in connection.subscribe(query, operation="Subscription2"):
@@ -208,8 +208,8 @@ async def test_sequential_subscriptions_using_one_connection(
 
     client = GraphQLClient(endpoint="/graphql", session=graphql_session)
 
-    data1: List[int] = []
-    data2: List[int] = []
+    data1: list[int] = []
+    data2: list[int] = []
 
     async with client.connect() as connection:
         async for payload in connection.subscribe(query):
@@ -233,8 +233,8 @@ async def test_parallel_subscriptions_using_one_connection(
 
     client = GraphQLClient(endpoint="/graphql", session=graphql_session)
 
-    data1: List[int] = []
-    data2: List[int] = []
+    data1: list[int] = []
+    data2: list[int] = []
 
     async with client.connect() as connection:
         subscription1 = connection.subscribe(query)
@@ -264,8 +264,8 @@ async def test_reusing_a_connection_after_cancelling_a_subscription(
 
     client = GraphQLClient(endpoint="/graphql", session=graphql_session)
 
-    data1: List[int] = []
-    data2: List[int] = []
+    data1: list[int] = []
+    data2: list[int] = []
 
     async with client.connect() as connection:
         async for payload in connection.subscribe(query):
@@ -337,7 +337,7 @@ async def test_keep_alive_message_handling(aiohttp_client: AiohttpClient):
         }
     """
 
-    data: List[int] = []
+    data: list[int] = []
 
     async with client.connect() as connection:
         async for payload in connection.subscribe(query):
@@ -355,7 +355,7 @@ async def test_client_ignores_non_text_messages(graphql_session: aiohttp.ClientS
 
     client = GraphQLClient(endpoint="/graphql", session=graphql_session)
 
-    data: List[int] = []
+    data: list[int] = []
 
     async with client.connect() as connection:
         async for payload in connection.subscribe(query):
@@ -375,7 +375,7 @@ async def test_client_ignores_messages_without_id(
 
     client = GraphQLClient(endpoint="/graphql", session=graphql_session)
 
-    data: List[int] = []
+    data: list[int] = []
 
     async with client.connect() as connection:
         async for payload in connection.subscribe(query):
@@ -395,7 +395,7 @@ async def test_client_ignores_messages_with_invalid_type(
 
     client = GraphQLClient(endpoint="/graphql", session=graphql_session)
 
-    data: List[int] = []
+    data: list[int] = []
 
     async with client.connect() as connection:
         async for payload in connection.subscribe(query):

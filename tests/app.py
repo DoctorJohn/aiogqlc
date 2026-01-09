@@ -1,6 +1,7 @@
 import asyncio
+from collections.abc import AsyncGenerator
 from io import BytesIO
-from typing import Any, AsyncGenerator, List, TypedDict, Union
+from typing import Any, TypedDict, Union
 
 import strawberry
 from aiohttp import web
@@ -56,7 +57,7 @@ todos = [
 @strawberry.type
 class Query:
     @strawberry.field
-    def users(self) -> List[User]:
+    def users(self) -> list[User]:
         return users
 
     @strawberry.field
@@ -64,7 +65,7 @@ class Query:
         return users[int(id)]
 
     @strawberry.field
-    def todos(self) -> List[Todo]:
+    def todos(self) -> list[Todo]:
         return todos
 
     @strawberry.field
@@ -83,7 +84,7 @@ class Mutation:
         return file.read().decode()
 
     @strawberry.mutation
-    def read_files(self, files: List[BytesIO]) -> List[str]:
+    def read_files(self, files: list[BytesIO]) -> list[str]:
         contents = []
         for file in files:
             content = file.read().decode()

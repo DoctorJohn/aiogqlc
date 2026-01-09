@@ -51,7 +51,7 @@ dev = [
 packages = ["aiogqlc"]
 
 [tool.ruff.lint]
-extend-select = ["I"]
+extend-select = ["I", "UP"]
 
 [tool.mypy]
 plugins = "strawberry.ext.mypy_plugin"
