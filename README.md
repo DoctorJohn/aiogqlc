@@ -11,7 +11,7 @@
 [pypi-image]: https://img.shields.io/pypi/v/aiogqlc
 [pypi-url]: https://pypi.org/project/aiogqlc/
 [downloads-image]: https://img.shields.io/pypi/dm/aiogqlc
-[downloads-url]: https://pypi.org/project/aiogqlc/
+[downloads-url]: https://pypistats.org/packages/aiogqlc
 [codecov-image]: https://codecov.io/gh/DoctorJohn/aiogqlc/branch/main/graph/badge.svg
 [codecov-url]: https://codecov.io/gh/DoctorJohn/aiogqlc
 [license-image]: https://img.shields.io/pypi/l/aiogqlc
