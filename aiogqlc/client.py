@@ -1,17 +1,10 @@
 import asyncio
 import json
+from collections.abc import AsyncGenerator
+from contextlib import AbstractAsyncContextManager
 from io import IOBase
 from types import TracebackType
-from typing import (
-    AsyncContextManager,
-    AsyncGenerator,
-    Dict,
-    List,
-    Optional,
-    Tuple,
-    Type,
-    Union,
-)
+from typing import Optional, Union
 
 import aiohttp
 import aiohttp.client
@@ -51,9 +44,9 @@ class GraphQLWSManager:
         self._session = session
         self._connection_params = connection_params
         self._last_operation_id = 0
-        self._ws_context: AsyncContextManager[aiohttp.ClientWebSocketResponse]
+        self._ws_context: AbstractAsyncContextManager[aiohttp.ClientWebSocketResponse]
         self._ws: aiohttp.ClientWebSocketResponse
-        self._execution_operation_message_queues: Dict[
+        self._execution_operation_message_queues: dict[
             str, asyncio.Queue[GraphQLWSServerExecutionOperationMessage]
         ] = {}
         self._connection_handler_task: asyncio.Task[None]
@@ -69,7 +62,7 @@ class GraphQLWSManager:
 
     async def __aexit__(
         self,
-        exc_type: Optional[Type[BaseException]],
+        exc_type: Optional[type[BaseException]],
         exc_val: Optional[BaseException],
         exc_tb: Optional[TracebackType],
     ) -> None:
@@ -239,19 +232,19 @@ class GraphQLClient:
     @classmethod
     def prepare(
         cls, variables: Optional[Variables]
-    ) -> Tuple[Optional[Variables], FilesToPathsMapping]:
+    ) -> tuple[Optional[Variables], FilesToPathsMapping]:
         files_to_paths_mapping: FilesToPathsMapping = {}
 
         def separate_files(path: str, obj: VariableValue) -> VariableValue:
             if isinstance(obj, list):
-                nulled_list: List[VariableValue] = []
+                nulled_list: list[VariableValue] = []
                 for index, value in enumerate(obj):
                     value = separate_files(f"{path}.{index}", value)
                     nulled_list.append(value)
                 return nulled_list
 
             elif isinstance(obj, dict):
-                nulled_dict: Dict[str, VariableValue] = {}
+                nulled_dict: dict[str, VariableValue] = {}
                 for key, value in obj.items():
                     value = separate_files(f"{path}.{key}", value)
                     nulled_dict[key] = value

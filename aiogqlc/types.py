@@ -1,5 +1,6 @@
+from collections.abc import Mapping, Sequence
 from io import IOBase
-from typing import Any, Dict, List, Literal, Mapping, Sequence, TypedDict, Union
+from typing import Any, Literal, TypedDict, Union
 
 from typing_extensions import NotRequired, Required, TypeAlias
 
@@ -26,7 +27,7 @@ ConnectionInitParamValue: TypeAlias = Union[
 
 ConnectionInitParams: TypeAlias = Mapping[str, ConnectionInitParamValue]
 
-FilesToPathsMapping: TypeAlias = Dict[IOBase, List[str]]
+FilesToPathsMapping: TypeAlias = dict[IOBase, list[str]]
 
 
 class Payload(TypedDict):
@@ -73,14 +74,14 @@ class GraphQLWSErrorLocations(TypedDict):
 
 class GraphQLWSError(TypedDict, total=False):
     message: Required[str]
-    locations: NotRequired[List[GraphQLWSErrorLocations]]
-    path: NotRequired[List[Union[str, int]]]
-    extensions: NotRequired[Dict[str, Any]]
+    locations: NotRequired[list[GraphQLWSErrorLocations]]
+    path: NotRequired[list[Union[str, int]]]
+    extensions: NotRequired[dict[str, Any]]
 
 
 class GraphQLWSConnectionErrorMessage(TypedDict):
     type: Literal["connection_error"]
-    payload: Dict[str, Any]
+    payload: dict[str, Any]
 
 
 class GraphQLWSConnectionAckMessage(TypedDict):
@@ -89,7 +90,7 @@ class GraphQLWSConnectionAckMessage(TypedDict):
 
 class GraphQLWSDataMessagePayload(TypedDict, total=False):
     data: Required[Any]
-    errors: NotRequired[List[GraphQLWSError]]
+    errors: NotRequired[list[GraphQLWSError]]
 
 
 class GraphQLWSDataMessage(TypedDict):
