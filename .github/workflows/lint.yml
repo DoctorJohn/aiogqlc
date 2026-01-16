@@ -27,4 +27,4 @@ jobs:
         run: |
           uv run ruff check aiogqlc tests
           uv run ruff format --diff aiogqlc tests
-          uv run mypy aiogqlc
+          uv run mypy aiogqlc tests
