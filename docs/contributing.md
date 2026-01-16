@@ -18,7 +18,7 @@ If you don't have make installed, take a look at the `Makefile` and run it's com
 If you want to run the linter automatically on every commit, you can install the pre-commit hooks by running:
 
 ```bash
-uv run pre-commit install
+uv run prek install
 ```
 
 ## Testing
