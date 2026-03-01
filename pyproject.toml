@@ -28,6 +28,11 @@ classifiers = [
     "Typing :: Typed",
 ]
 
+[project.urls]
+homepage = "https://doctorjohn.github.io/aiogqlc/"
+repository = "https://github.com/DoctorJohn/aiogqlc"
+documentation = "https://doctorjohn.github.io/aiogqlc/"
+
 [dependency-groups]
 dev = [
     "pytest>=8.3.3",
