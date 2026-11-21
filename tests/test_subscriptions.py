@@ -2,7 +2,6 @@ from typing import Any
 
 import aiohttp
 import pytest
-from aiohttp import web
 from pytest_aiohttp import AiohttpClient
 from strawberry.aiohttp.views import GraphQLView
 from strawberry.subscriptions.protocols.graphql_ws.handlers import BaseGraphQLWSHandler
@@ -13,7 +12,7 @@ from aiogqlc.errors import (
     GraphQLWSOperationError,
     GraphQLWSProtocolError,
 )
-from tests.app import create_app, schema
+from tests.app import create_app
 
 
 async def test_choosing_unsupported_protocol(graphql_session: aiohttp.ClientSession):
@@ -292,8 +291,7 @@ async def test_server_connection_rejection(aiohttp_client: AiohttpClient):
     class ConnectionRejectingGraphQLView(GraphQLView[Any, None]):
         graphql_ws_handler_class = ConnectingRejectingHandler
 
-    app = web.Application()
-    app.router.add_route("*", "/graphql", ConnectionRejectingGraphQLView(schema=schema))
+    app = create_app(view_class=ConnectionRejectingGraphQLView)
 
     graphql_session = await aiohttp_client(app)
     client = GraphQLClient(endpoint="/graphql", session=graphql_session)
@@ -317,8 +315,7 @@ async def test_server_connection_protocol_violation(aiohttp_client: AiohttpClien
     class ProtocolViolatingGraphQLView(GraphQLView[Any, None]):
         graphql_ws_handler_class = ProtocolViolatingHandler
 
-    app = web.Application()
-    app.router.add_route("*", "/graphql", ProtocolViolatingGraphQLView(schema=schema))
+    app = create_app(view_class=ProtocolViolatingGraphQLView)
 
     graphql_session = await aiohttp_client(app)
     client = GraphQLClient(endpoint="/graphql", session=graphql_session)

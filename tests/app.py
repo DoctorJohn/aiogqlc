@@ -170,8 +170,13 @@ schema = strawberry.Schema(
 )
 
 
-def create_app(**kwargs: Any):
-    view = GraphQLView(schema=schema, multipart_uploads_enabled=True, **kwargs)
+def create_app(view_class: type[GraphQLView] = GraphQLView, **kwargs: Any):
+    view = view_class(schema=schema, multipart_uploads_enabled=True, **kwargs)
+
+    # aiohttp expects a coroutine function, which a GraphQLView instance isn't
+    async def handler(request: web.Request) -> web.StreamResponse:
+        return await view(request)
+
     app = web.Application()
-    app.router.add_route("*", "/graphql", view)
+    app.router.add_route("*", "/graphql", handler)
     return app
