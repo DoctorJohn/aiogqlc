@@ -5,6 +5,7 @@ repo_url: https://github.com/DoctorJohn/aiogqlc/
 
 theme:
   name: material
+  variant: classic
   features:
     - navigation.sections
     - navigation.instant
