@@ -32,7 +32,6 @@ async def graphql_client(aiohttp_client):
 async def test_ping_query(graphql_client):
     response = await graphql_client.execute("query { ping }")
     assert await response.json() == {"data": {"ping": "pong"}}
-
 ```
 
 In fact, the `aiogqlc` test suite itself is based on this approach.

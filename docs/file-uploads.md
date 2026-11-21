@@ -22,9 +22,7 @@ document = """
     }
 """
 
-variables = {
-    "file": open("test.txt", "rb")
-}
+variables = {"file": open("test.txt", "rb")}
 
 
 async def foo():

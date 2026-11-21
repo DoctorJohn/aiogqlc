@@ -6,7 +6,7 @@ from typing import Any, TypedDict
 import strawberry
 from aiohttp import web
 from strawberry.aiohttp.views import GraphQLView
-from strawberry.file_uploads import Upload
+from strawberry.file_uploads import UploadDefinition
 from strawberry.types import Info
 
 
@@ -166,7 +166,7 @@ schema = strawberry.Schema(
     query=Query,
     mutation=Mutation,
     subscription=Subscription,
-    scalar_overrides={BytesIO: Upload},
+    scalar_overrides={BytesIO: UploadDefinition},
 )
 
 

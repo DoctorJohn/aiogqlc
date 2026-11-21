@@ -89,6 +89,7 @@ document = """
     }
 """
 
+
 async def main():
     async with aiohttp.ClientSession() as session:
         client = GraphQLClient(endpoint, session=session)
