@@ -1,29 +1,27 @@
 from collections.abc import Mapping, Sequence
 from io import IOBase
-from typing import Any, Literal, TypedDict, Union
+from typing import Any, Literal, NotRequired, Required, TypeAlias, TypedDict
 
-from typing_extensions import NotRequired, Required, TypeAlias
-
-VariableValue: TypeAlias = Union[
-    str,
-    int,
-    None,
-    float,
-    IOBase,
-    Sequence["VariableValue"],
-    Mapping[str, "VariableValue"],
-]
+VariableValue: TypeAlias = (
+    str
+    | int
+    | None
+    | float
+    | IOBase
+    | Sequence["VariableValue"]
+    | Mapping[str, "VariableValue"]
+)
 
 Variables: TypeAlias = Mapping[str, VariableValue]
 
-ConnectionInitParamValue: TypeAlias = Union[
-    None,
-    str,
-    int,
-    float,
-    Sequence["ConnectionInitParamValue"],
-    Mapping[str, "ConnectionInitParamValue"],
-]
+ConnectionInitParamValue: TypeAlias = (
+    None
+    | str
+    | int
+    | float
+    | Sequence["ConnectionInitParamValue"]
+    | Mapping[str, "ConnectionInitParamValue"]
+)
 
 ConnectionInitParams: TypeAlias = Mapping[str, ConnectionInitParamValue]
 
@@ -59,12 +57,12 @@ class GraphQLWSConnectionTerminateMessage(TypedDict):
     type: Literal["connection_terminate"]
 
 
-GraphQLWSClientOperationMessage: TypeAlias = Union[
-    GraphQLWSConnectionInitMessage,
-    GraphQLWSStartMessage,
-    GraphQLWSStopMessage,
-    GraphQLWSConnectionTerminateMessage,
-]
+GraphQLWSClientOperationMessage: TypeAlias = (
+    GraphQLWSConnectionInitMessage
+    | GraphQLWSStartMessage
+    | GraphQLWSStopMessage
+    | GraphQLWSConnectionTerminateMessage
+)
 
 
 class GraphQLWSErrorLocations(TypedDict):
@@ -75,7 +73,7 @@ class GraphQLWSErrorLocations(TypedDict):
 class GraphQLWSError(TypedDict, total=False):
     message: Required[str]
     locations: NotRequired[list[GraphQLWSErrorLocations]]
-    path: NotRequired[list[Union[str, int]]]
+    path: NotRequired[list[str | int]]
     extensions: NotRequired[dict[str, Any]]
 
 
@@ -114,19 +112,16 @@ class GraphQLWSConnectionKeepAliveMesssage(TypedDict, total=True):
     type: Literal["ka"]
 
 
-GraphQLWSServerConnectionOperationMessage: TypeAlias = Union[
-    GraphQLWSConnectionErrorMessage,
-    GraphQLWSConnectionAckMessage,
-    GraphQLWSConnectionKeepAliveMesssage,
-]
+GraphQLWSServerConnectionOperationMessage: TypeAlias = (
+    GraphQLWSConnectionErrorMessage
+    | GraphQLWSConnectionAckMessage
+    | GraphQLWSConnectionKeepAliveMesssage
+)
 
-GraphQLWSServerExecutionOperationMessage: TypeAlias = Union[
-    GraphQLWSDataMessage,
-    GraphQLWSErrorMessage,
-    GraphQLWSCompleteMessage,
-]
+GraphQLWSServerExecutionOperationMessage: TypeAlias = (
+    GraphQLWSDataMessage | GraphQLWSErrorMessage | GraphQLWSCompleteMessage
+)
 
-GraphQLWSServerOperationMessage: TypeAlias = Union[
-    GraphQLWSServerConnectionOperationMessage,
-    GraphQLWSServerExecutionOperationMessage,
-]
+GraphQLWSServerOperationMessage: TypeAlias = (
+    GraphQLWSServerConnectionOperationMessage | GraphQLWSServerExecutionOperationMessage
+)
