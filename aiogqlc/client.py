@@ -4,7 +4,6 @@ from collections.abc import AsyncGenerator
 from contextlib import AbstractAsyncContextManager
 from io import IOBase
 from types import TracebackType
-from typing import Optional, Union
 
 import aiohttp
 import aiohttp.client
@@ -37,8 +36,8 @@ class GraphQLWSManager:
     def __init__(
         self,
         endpoint: str,
-        session: Union[aiohttp.ClientSession, aiohttp.test_utils.TestClient],
-        connection_params: Optional[ConnectionInitParams] = None,
+        session: aiohttp.ClientSession | aiohttp.test_utils.TestClient,
+        connection_params: ConnectionInitParams | None = None,
     ) -> None:
         self._endpoint = endpoint
         self._session = session
@@ -62,9 +61,9 @@ class GraphQLWSManager:
 
     async def __aexit__(
         self,
-        exc_type: Optional[type[BaseException]],
-        exc_val: Optional[BaseException],
-        exc_tb: Optional[TracebackType],
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: TracebackType | None,
     ) -> None:
         await self.terminate_connection()
         await self._connection_handler_task
@@ -73,8 +72,8 @@ class GraphQLWSManager:
     async def subscribe(
         self,
         query: str,
-        variables: Optional[Variables] = None,
-        operation: Optional[str] = None,
+        variables: Variables | None = None,
+        operation: str | None = None,
     ) -> AsyncGenerator[GraphQLWSDataMessagePayload, None]:
         operation_id = self.get_next_operation_id()
         self._execution_operation_message_queues[operation_id] = asyncio.Queue()
@@ -95,7 +94,7 @@ class GraphQLWSManager:
         self._last_operation_id += 1
         return str(self._last_operation_id)
 
-    async def init_connection(self, params: Optional[ConnectionInitParams]) -> None:
+    async def init_connection(self, params: ConnectionInitParams | None) -> None:
         connection_init_message: GraphQLWSConnectionInitMessage = {
             "type": "connection_init",
             "payload": params or {},
@@ -118,8 +117,8 @@ class GraphQLWSManager:
         self,
         operation_id: str,
         query: str,
-        variables: Optional[Variables] = None,
-        operation: Optional[str] = None,
+        variables: Variables | None = None,
+        operation: str | None = None,
     ) -> None:
         payload = serialize_payload(query, variables, operation)
         start_message: GraphQLWSStartMessage = {
@@ -192,13 +191,13 @@ class GraphQLClient:
     def __init__(
         self,
         endpoint: str,
-        session: Union[aiohttp.ClientSession, aiohttp.test_utils.TestClient],
+        session: aiohttp.ClientSession | aiohttp.test_utils.TestClient,
     ) -> None:
         self.endpoint = endpoint
         self.session = session
 
     def connect(
-        self, protocol: str = GRAPHQL_WS, params: Optional[ConnectionInitParams] = None
+        self, protocol: str = GRAPHQL_WS, params: ConnectionInitParams | None = None
     ) -> GraphQLWSManager:
         if protocol == GRAPHQL_WS:
             return GraphQLWSManager(self.endpoint, self.session, params)
@@ -207,8 +206,8 @@ class GraphQLClient:
     async def execute(
         self,
         query: str,
-        variables: Optional[Variables] = None,
-        operation: Optional[str] = None,
+        variables: Variables | None = None,
+        operation: str | None = None,
         **kwargs,
     ) -> aiohttp.ClientResponse:
         nulled_variables, files_to_paths_mapping = self.prepare(variables)
@@ -231,8 +230,8 @@ class GraphQLClient:
 
     @classmethod
     def prepare(
-        cls, variables: Optional[Variables]
-    ) -> tuple[Optional[Variables], FilesToPathsMapping]:
+        cls, variables: Variables | None
+    ) -> tuple[Variables | None, FilesToPathsMapping]:
         files_to_paths_mapping: FilesToPathsMapping = {}
 
         def separate_files(path: str, obj: VariableValue) -> VariableValue:
@@ -274,9 +273,9 @@ class GraphQLClient:
     def prepare_multipart(
         cls,
         query: str,
-        nulled_variables: Optional[Variables],
+        nulled_variables: Variables | None,
         files_to_paths_mapping: FilesToPathsMapping,
-        operation: Optional[str] = None,
+        operation: str | None = None,
     ) -> aiohttp.FormData:
         form_data = aiohttp.FormData()
         operations = serialize_payload(query, nulled_variables, operation)

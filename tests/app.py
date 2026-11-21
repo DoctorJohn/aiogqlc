@@ -1,7 +1,7 @@
 import asyncio
 from collections.abc import AsyncGenerator
 from io import BytesIO
-from typing import Any, TypedDict, Union
+from typing import Any, TypedDict
 
 import strawberry
 from aiohttp import web
@@ -12,7 +12,7 @@ from strawberry.types import Info
 
 class CustomContext(TypedDict):
     request: web.Request
-    response: Union[web.Response, web.WebSocketResponse]
+    response: web.Response | web.WebSocketResponse
 
 
 @strawberry.type
