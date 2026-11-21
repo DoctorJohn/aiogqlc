@@ -27,4 +27,4 @@ Run `make test` to run all tests in your local environment.
 
 ## Documentation
 
-Preview the documentation website locally by running `uv run mkdocs serve`.
+Preview the documentation website locally by running `uv run zensical serve`.
