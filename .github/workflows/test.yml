@@ -14,6 +14,8 @@ jobs:
         python-version: ["3.9", "3.10", "3.11", "3.12", "3.13", "3.14"]
     steps:
       - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Install uv and set the python version
         uses: astral-sh/setup-uv@v10.4.0
