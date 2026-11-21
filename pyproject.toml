@@ -3,7 +3,8 @@ name = "aiogqlc"
 version = "5.4.0"
 description = "aiohttp based GraphQL client"
 authors = [{ name = "Jonathan Ehwald", email = "github@ehwald.info" }]
-license = { text = "MIT" }
+license = "MIT"
+license-files = ["LICENSE"]
 readme = "README.md"
 requires-python = ">=3.9,<4.0"
 dependencies = ["aiohttp (>=3.6.0,<4.0.0)"]
@@ -11,7 +12,6 @@ classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Environment :: Web Environment",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
