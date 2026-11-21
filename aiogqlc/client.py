@@ -4,6 +4,7 @@ from collections.abc import AsyncGenerator
 from contextlib import AbstractAsyncContextManager
 from io import IOBase
 from types import TracebackType
+from typing import Self
 
 import aiohttp
 import aiohttp.client
@@ -50,7 +51,7 @@ class GraphQLWSManager:
         ] = {}
         self._connection_handler_task: asyncio.Task[None]
 
-    async def __aenter__(self) -> "GraphQLWSManager":
+    async def __aenter__(self) -> Self:
         self._ws_context = self._session.ws_connect(
             self._endpoint, protocols=[GRAPHQL_WS]
         )
@@ -87,8 +88,8 @@ class GraphQLWSManager:
                 yield payload
         except StopAsyncIteration:
             await self.stop_operation(operation_id)
-        except GraphQLWSOperationError as exc:
-            raise exc
+        except GraphQLWSOperationError:
+            raise
 
     def get_next_operation_id(self) -> str:
         self._last_operation_id += 1
@@ -262,10 +263,10 @@ class GraphQLClient:
         if variables is None:
             return None, files_to_paths_mapping
 
-        nulled_variables: Variables = dict(
-            (key, separate_files(f"variables.{key}", value))
+        nulled_variables: Variables = {
+            key: separate_files(f"variables.{key}", value)
             for key, value in variables.items()
-        )
+        }
 
         return nulled_variables, files_to_paths_mapping
 

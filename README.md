@@ -106,9 +106,7 @@ document = """
     }
 """
 
-variables = {
-    "file": open("test.txt", "rb")
-}
+variables = {"file": open("test.txt", "rb")}
 
 
 async def foo():
@@ -116,7 +114,6 @@ async def foo():
         client = GraphQLClient("https://example.com/graphql/", session=session)
         response = await client.execute(document, variables=variables)
         print(await response.json())
-
 ```
 
 ### Subscriptions
@@ -131,9 +128,7 @@ document = """
     }
 """
 
-variables = {
-    "postId": "42"
-}
+variables = {"postId": "42"}
 
 
 async def main():

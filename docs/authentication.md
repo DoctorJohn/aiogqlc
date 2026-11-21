@@ -13,9 +13,8 @@ The following example shows how to set a default `Authorization` header for the 
 import aiohttp
 from aiogqlc import GraphQLClient
 
-headers = {
-    "Authorization": "Token <your-token-here>"
-}
+headers = {"Authorization": "Token <your-token-here>"}
+
 
 async def foo():
     async with aiohttp.ClientSession(headers=headers) as session:
@@ -28,9 +27,8 @@ Instead of setting a default header for the whole session, you can also set a he
 import aiohttp
 from aiogqlc import GraphQLClient
 
-headers = {
-    "Authorization": "Token <your-token-here>"
-}
+headers = {"Authorization": "Token <your-token-here>"}
+
 
 async def foo():
     async with aiohttp.ClientSession() as session:

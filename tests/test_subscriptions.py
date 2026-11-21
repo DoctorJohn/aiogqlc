@@ -109,7 +109,10 @@ async def test_missing_variables(graphql_session: aiohttp.ClientSession):
                 assert False, "Unreachable"
 
     payload = exc_info.value.payload
-    expectation = "Variable '$to' of required type 'Int!' was not provided."
+    expectation = (
+        "Variable '$to' has invalid value: "
+        "Expected a value of non-null type 'Int!' to be provided."
+    )
     assert isinstance(payload, dict)
     assert payload["message"] == expectation
 

@@ -11,6 +11,7 @@ For this purpose, any additional keyword argument passed to `GraphQLClient.execu
 import aiohttp
 from aiogqlc import GraphQLClient
 
+
 async def foo():
     async with aiohttp.ClientSession() as session:
         client = GraphQLClient("https://example.com/graphql/", session=session)

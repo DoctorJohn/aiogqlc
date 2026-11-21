@@ -29,9 +29,7 @@ document = """
     }
 """
 
-variables = {
-    "postId": "42"
-}
+variables = {"postId": "42"}
 
 
 async def foo():
@@ -59,9 +57,7 @@ document = """
 
 
 async def watch_likes(connection, post_id):
-    variables = {
-        "postId": post_id
-    }
+    variables = {"postId": post_id}
 
     async for payload in connection.subscribe(document, variables=variables):
         print(payload)
@@ -97,7 +93,9 @@ async def foo():
         client = GraphQLClient("https://example.com/graphql/", session=session)
 
         async with client.connect() as connection:
-            async for payload in connection.subscribe(document, operation="Subscription2"):
+            async for payload in connection.subscribe(
+                document, operation="Subscription2"
+            ):
                 print(payload)
 ```
 
